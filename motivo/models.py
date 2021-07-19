@@ -1,16 +1,22 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
-class User(models.Model):
-    first_name = models.CharField(max_length=60)
-    last_name = models.CharField(max_length=60)
-    email = models.CharField(max_length=60)
-    password = models.CharField(max_length=60)
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     initial_budget = models.IntegerField(validators=[MinValueValidator(0),
-                                       MaxValueValidator(5000)])
+                                                     MaxValueValidator(5000)])
     annual_budget = models.IntegerField(validators=[MinValueValidator(0),
-                                       MaxValueValidator(5000)])
+                                                    MaxValueValidator(5000)])
 
-    def __str__(self):
-        return self.first_name
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
 

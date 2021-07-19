@@ -1,8 +1,13 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
+from .models import Profile
 
-from .models import User
+class UserSerializer(serializers.ModelSerializer):
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = User
-        fields = ('id', 'first_name', 'last_name', 'email', 'password', 'initial_budget', 'annual_budget')
+        model = Profile
+        fields = ('user', 'initial_budget', 'annual_budget')
+
+
+
+
