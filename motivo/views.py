@@ -6,9 +6,12 @@ from .models import Profile
 from .forms import NewUserForm, UserForm, ProfileForm
 from django.shortcuts import render
 
+from rest_framework.permissions import IsAuthenticated
+
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = Profile.objects.all().order_by('initial_budget')
-    serializer_class = UserSerializer
+	permission_classes = (IsAuthenticated,)
+	queryset = Profile.objects.all().order_by('initial_budget')
+	serializer_class = UserSerializer
 
 def userpage(request):
 	user_form = UserForm(instance=request.user)
