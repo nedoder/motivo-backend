@@ -6,15 +6,15 @@ from django import forms
 class NewUserForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email', 'password')
+        fields = ('first_name', 'last_name', 'email')
 
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('password', 'first_name', 'last_name', 'email')
+        fields = ('first_name', 'last_name', 'email')
 
 
 class ProfileForm(forms.ModelForm):
 	class Meta:
 		model = Profile
-		fields = ('initial_budget', 'annual_budget')
+		fields = ('initial_budget', 'annual_budget', 'title')
