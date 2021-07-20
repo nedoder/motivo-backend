@@ -8,9 +8,9 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     initial_budget = models.IntegerField(validators=[MinValueValidator(0),
-                                                     MaxValueValidator(5000)])
+                                                     MaxValueValidator(5000)], null=True)
     annual_budget = models.IntegerField(validators=[MinValueValidator(0),
-                                                    MaxValueValidator(5000)])
+                                                    MaxValueValidator(5000)], null=True)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
