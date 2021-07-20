@@ -1,9 +1,12 @@
-from django.contrib.auth.admin import UserAdmin
-from django.contrib import admin
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 
-from .models import Profile
+from django.contrib import admin
+
+from .models import Profile, Challenge, Attempt
 
 admin.site.register(Profile)
+admin.site.register(Challenge)
+admin.site.register(Attempt)
+
+
+
 

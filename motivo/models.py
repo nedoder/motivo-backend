@@ -20,6 +20,7 @@ class Attempt(models.Model):
     coins_to_win = models.IntegerField(null=True)
     file = models.FileField(upload_to='uploads/')
 
+
 class Challenge(models.Model):
     attempt = models.ForeignKey(Attempt, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
