@@ -12,6 +12,21 @@ class Profile(models.Model):
     annual_budget = models.IntegerField(validators=[MinValueValidator(0),
                                                     MaxValueValidator(5000)], null=True)
 
+
+class Attempt(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    confirmed_by_admin = models.BooleanField(default=False)
+    description = models.CharField(max_length=100)
+    coins_to_win = models.IntegerField(null=True)
+    file = models.FileField(upload_to='uploads/')
+
+class Challenge(models.Model):
+    attempt = models.ForeignKey(Attempt, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    coins_to_win = models.IntegerField(null=True)
+    image = models.FileField(upload_to='uploads/')
+
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
