@@ -2,6 +2,46 @@
 
 	{% block content %}
 
+		<br><br>
+			<div>
+					<div>
+						<div>
+							<h4 style="text-align:center;">Hello, {{ user.username|title }}</h4>
+			      			<hr>
+			    			<div>
+			    				<p style="font-size: 20px">Username:</p>
+			    				<p>{{ user.username }}</p>
+			    				<p style="font-size: 20px">Name:</p>
+				  				<p>{{ user.first_name }} {{ user.last_name }}</p>
+				  				<p style="font-size: 20px">Email:</p>
+				  				<p>{{ user.email }} </p>
+								<p style="font-size: 20px">Initial budget:</p>
+								<p>{{ user.profile.initial_budget }} </p>
+								<p style="font-size: 20px">Annual budget:</p>
+								<p>{{ user.profile.annual_budget }} </p>
+							</div>
+						</div>
+					</div>
+				    <div>
+						<h5 style="text-align:center;">Edit User</h5>
+						<form method="post">
+							{% csrf_token %}
+							{{ user_form }}
+							<button type="submit">Save changes</button>
+						</form>
+					</div>
+				    <br>
+					<div>
+						<h5 style="text-align:center;">Edit Profile</h5>
+						<form method="post">
+							{% csrf_token %}
+							{{ profile_form }}
+							<button type="submit">Save changes</button>
+						</form>
+					</div>
+				    <br>
+
+			</div>
 
 
 	{% endblock %}
