@@ -11,21 +11,19 @@ class Profile(models.Model):
                                                      MaxValueValidator(5000)], null=True)
     annual_budget = models.IntegerField(validators=[MinValueValidator(0),
                                                     MaxValueValidator(5000)], null=True)
-
+class Challenge(models.Model):
+    title = models.CharField(max_length=100)
+    coins_to_win = models.IntegerField(null=True)
+    image = models.ImageField(upload_to='uploads/images/')
 
 class Attempt(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE, null=True, blank=True, default=None)
     confirmed_by_admin = models.BooleanField(default=False)
-    description = models.CharField(max_length=100)
-    coins_to_win = models.IntegerField(null=True)
-    file = models.FileField(upload_to='uploads/')
+    file = models.FileField(upload_to='uploads/attempts/')
 
 
-class Challenge(models.Model):
-    attempt = models.ForeignKey(Attempt, on_delete=models.CASCADE)
-    title = models.CharField(max_length=100)
-    coins_to_win = models.IntegerField(null=True)
-    image = models.FileField(upload_to='uploads/')
+
 
 
 @receiver(post_save, sender=User)
