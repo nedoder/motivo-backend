@@ -7,6 +7,7 @@ from django.dispatch import receiver
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
+    collected_coins = models.IntegerField(null=True, blank=True)
     initial_budget = models.IntegerField(validators=[MinValueValidator(0),
                                                      MaxValueValidator(5000)], null=True)
     annual_budget = models.IntegerField(validators=[MinValueValidator(0),
@@ -21,6 +22,13 @@ class Attempt(models.Model):
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE, null=True, blank=True, default=0)
     confirmed_by_admin = models.BooleanField(default=False, null=True, blank=True)
     file = models.FileField(upload_to='uploads/attempts/', null=True, blank=True)
+
+class Awards(models.Model):
+    challenge = models.OneToOneField(Challenge, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100, null=True, blank=True)
+    description = models.CharField(max_length=100, null=True, blank=True)
+    price_in_coins = models.IntegerField(null=True, blank=True)
+    image = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
 
 
 
