@@ -15,7 +15,7 @@ router.register(r'completed', views.CompletedViewSet, basename='completed')
 urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path("testing", views.userpage, name = "userpage"),
+    path('user', views.userpage, name='userpage'),
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ]

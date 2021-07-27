@@ -2,9 +2,8 @@ from rest_framework import viewsets
 
 from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer
 from .models import Profile, Challenge, Attempt
-from django.contrib.auth.models import User
 
-from .forms import UserForm, ProfileForm
+from .forms import UserForm
 from django.shortcuts import render, redirect
 
 from rest_framework.permissions import IsAuthenticated
@@ -38,16 +37,11 @@ class CompletedViewSet(viewsets.ModelViewSet):
 def userpage(request):
 	if request.method == "POST":
 		user_form = UserForm(request.POST, instance=request.user)
-		profile_form = ProfileForm(request.POST, instance=request.user.profile)
 		if user_form.is_valid():
 			user_form.save()
 			messages.success(request, ('Your user data was successfully updated!'))
-		elif profile_form.is_valid():
-			profile_form.save()
-			messages.success(request, ('Your profile was successfully updated!'))
 		else:
 			messages.error(request, ('Unable to complete request'))
-		return redirect("userpage")
+		return redirect("user")
 	user_form = UserForm(instance=request.user)
-	profile_form = ProfileForm(instance=request.user.profile)
-	return render(request=request, template_name="test.html", context={"user":request.user, "user_form":user_form, "profile_form":profile_form })
+	return render(request=request, template_name="test.html", context={"user":request.user, "user_form":user_form })
