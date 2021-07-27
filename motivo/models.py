@@ -10,7 +10,7 @@ class Profile(models.Model):
     annual_budget = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.user
+        return self.title
 
 class Challenge(models.Model):
     title = models.CharField(max_length=100, default='')
@@ -29,7 +29,7 @@ class Attempt(models.Model):
     date = models.DateTimeField(default=datetime.now)
 
     def __str__(self):
-        return self.challenge
+        return str(self.user)
 
 class Awards(models.Model):
     challenge = models.OneToOneField(Challenge, on_delete=models.CASCADE)
