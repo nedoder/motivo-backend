@@ -1,19 +1,39 @@
 from rest_framework import viewsets
 
-from .serializers import UserSerializer
-from .models import Profile
+from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer
+from .models import Profile, Challenge, Attempt
+from django.contrib.auth.models import User
 
 from .forms import UserForm, ProfileForm
 from django.shortcuts import render, redirect
 
 from rest_framework.permissions import IsAuthenticated
-
 from django.contrib import messages
+
+
+
 
 class UserViewSet(viewsets.ModelViewSet):
 	permission_classes = (IsAuthenticated,)
 	queryset = Profile.objects.all().order_by('initial_budget')
 	serializer_class = UserSerializer
+
+class ProfileViewSet(viewsets.ModelViewSet):
+	permission_classes = (IsAuthenticated,)
+	queryset = Profile.objects.all().order_by('collected_coins')
+	serializer_class = ProfileSerializer
+
+class ChallengeViewSet(viewsets.ModelViewSet):
+	permission_classes = (IsAuthenticated,)
+	queryset = Challenge.objects.all().order_by('title')
+	serializer_class = ChallengeSerializer
+
+class CompletedViewSet(viewsets.ModelViewSet):
+	permission_classes = (IsAuthenticated,)
+	queryset = Attempt.objects.all().filter(confirmed_by_admin=False).order_by('title')
+	serializer_class = CompletedSerializer
+
+
 
 def userpage(request):
 	if request.method == "POST":

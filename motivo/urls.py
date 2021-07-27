@@ -5,6 +5,11 @@ from rest_framework_simplejwt import views as jwt_views
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
+router.register(r'ranking', views.ProfileViewSet, basename='ranking')
+router.register(r'challenges', views.ChallengeViewSet, basename='challenges')
+router.register(r'completed', views.CompletedViewSet, basename='completed')
+# router.register(r'login', views.Login, basename='login')
+# router.register(r'logout', views.Logout, basename='logout')
 
 
 urlpatterns = [
