@@ -40,17 +40,20 @@ class UserEditViewSet(viewsets.ModelViewSet):
 	queryset = User.objects.all()
 	serializer_class = UserEditSerializer
 
-	def update(self, request, *args, **kwargs):
-		instance = self.get_object()
-		serializer = self.serializer_class(instance=instance, data=request.data, partial=True)
-		if serializer.is_valid():
-			self.object.set_password(serializer.data.get("password"))
-			self.object.set_username(serializer.data.get("username"))
-			self.object.set_email(serializer.data.get("email"))
-			self.object.set_first_name(serializer.data.get("first_name"))
-			self.object.set_last_name(serializer.data.get("last_name"))
-			self.object.save()
-		return Response(serializer.data, status=status.HTTP_200_OK)
+	def put(self, request):
+
+		username = request.data['username']
+		user = User.objects.get(username=username)
+		serialized = UserEditSerializer(user, data=request.data)
+
+		if serialized.is_valid():
+			serialized.update(user, serialized.validated_data)
+			return Response(data={"status": "api_user_update_ok"}, status=status.HTTP_201_CREATED)
+
+		else:
+			print(serialized.errors)
+			return Response(data={"status": "api_user_update_failed", "error": serialized.errors.get('email')[0]},
+							status=status.HTTP_400_BAD_REQUEST)
 
 
 
