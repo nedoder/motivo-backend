@@ -1,14 +1,12 @@
 from rest_framework import viewsets
 
-from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer
+from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer, AttemptSerializer, UserEditSerializer
 from .models import Profile, Challenge, Attempt
-
-from .forms import UserForm, AttemptForm
-from django.shortcuts import render, redirect
-
+from django.contrib.auth.models import User
+from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash
+
+from rest_framework import status
 
 
 
@@ -32,28 +30,27 @@ class CompletedViewSet(viewsets.ModelViewSet):
 	queryset = Attempt.objects.all().filter(confirmed_by_admin=False).order_by('date')
 	serializer_class = CompletedSerializer
 
+class AttemptViewSet(viewsets.ModelViewSet):
+	permission_classes = (IsAuthenticated,)
+	queryset = Attempt.objects.all()
+	serializer_class = AttemptSerializer
+
+class UserEditViewSet(viewsets.ModelViewSet):
+	permission_classes = (IsAuthenticated,)
+	queryset = User.objects.all()
+	serializer_class = UserEditSerializer
+
+	def update(self, request, *args, **kwargs):
+		instance = self.get_object()
+		serializer = self.serializer_class(instance=instance, data=request.data, partial=True)
+		if serializer.is_valid():
+			self.object.set_password(serializer.data.get("password"))
+			self.object.set_username(serializer.data.get("username"))
+			self.object.set_email(serializer.data.get("email"))
+			self.object.set_first_name(serializer.data.get("first_name"))
+			self.object.set_last_name(serializer.data.get("last_name"))
+			self.object.save()
+		return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-def userpage(request):
-	if request.method == "POST":
-		user_form = UserForm(request.POST, instance=request.user)
-		if user_form.is_valid():
-			user_form.save()
-			messages.success(request, ('Your user data was successfully updated!'))
-		else:
-			messages.error(request, ('Unable to complete request'))
-		return redirect("/")
-	user_form = UserForm(instance=request.user)
-	return render(request=request, template_name="test.html", context={"user":request.user, "user_form":user_form })
 
-def attempts(request):
-	if request.method == "POST":
-		attempt_form = AttemptForm(request.POST, instance=request.user)
-		if attempt_form.is_valid():
-			attempt_form.save()
-			messages.success(request, ('Your challenge was successfully uploaded!'))
-		else:
-			messages.error(request, ('Unable to complete request'))
-		return redirect("attempts")
-	attempt_form = AttemptForm(instance=request.user)
-	return render(request=request, template_name="attempt.html", context={"user":request.user, "attempt_form":attempt_form })

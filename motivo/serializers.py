@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Profile, Challenge, Attempt
+from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,7 +22,15 @@ class CompletedSerializer(serializers.ModelSerializer):
         model = Attempt
         fields = ('challenge', )
 
+class AttemptSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attempt
+        fields = ('user', 'challenge', 'file' )
 
+class UserEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email', 'password', 'username' )
 
 
 
