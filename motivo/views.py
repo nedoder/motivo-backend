@@ -42,13 +42,13 @@ class UserEditViewSet(viewsets.ModelViewSet):
 
 	def put(self, request):
 
-		username = request.data['username']
-		user = User.objects.get(username=username)
+		id = request.data['id']
+		user = User.objects.get(id=id)
 		serialized = UserEditSerializer(user, data=request.data)
 
 		if serialized.is_valid():
 			serialized.update(user, serialized.validated_data)
-			return Response(data={"status": "api_user_update_ok"}, status=status.HTTP_201_CREATED)
+			return Response(data={"status": "api_user_update_ok"}, status=status.HTTP_200_OK)
 
 		else:
 			print(serialized.errors)
