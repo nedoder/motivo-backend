@@ -2,33 +2,24 @@ from django.test import TestCase, Client
 from ..models import Challenge
 from django.urls import reverse
 from ..views import UserEditViewSet
+from django.contrib.auth.models import User
 client = Client()
-
+from rest_framework.test import APIRequestFactory
+factory = APIRequestFactory()
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-# class testEdit(APITestCase):
-#
-#     def test_User(self):
-#         self.user = User.objects.create(
-#             username='test', email='test@test.com', first_name='testing', last_name = 'testtest', password='password')
-#
-#         self.valid_payload = {
-#             'username': 'test',
-#             'email': 'test@test.com',
-#             'first_name': 'Tanja',
-#             'last_name': 'Nedoder',
-#             'password' : 'password'
-#         }
-#
-#     def test_editUser(self):
-#         url = ('user')
-#         data = {'username': 'test'}
-#         response = self.client.post(url, data, format='json')
-#         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-#         self.assertEqual(User.objects.count(), 1)
-#         self.assertEqual(User.objects.get().username, 'test')
+class testEdit(APITestCase):
+
+    def test_User(self):
+        self.user = User.objects.create(
+            username='test', email='test@test.com', first_name='testing', last_name = 'testtest', password='password')
+
+    def test_editUser(self):
+        factory.put('/user/', {'username':'testnedoder'})
+        self.assertEqual(User.objects.count(), 1)
+        self.assertEqual(User.objects.get().username, 'testnedoder')
 
 class testChallege(TestCase):
 
