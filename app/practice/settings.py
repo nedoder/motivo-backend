@@ -86,14 +86,25 @@ WSGI_APPLICATION = 'practice.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': str(env('DB_ENGINE')),
-        'NAME': str(env('DB_NAME')),
-        'USER': str(env('DB_USER')),
-        'PASSWORD': str(env('DB_PASSWORD')),
-        'HOST': str(env('DB_HOST')),
-        'PORT': int(env('DB_PORT')),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'USER': 'nedoder',
+        'PASSWORD': 'njanjanja',
+        'HOST': '127.0.0.1',
+        'PORT': '8000'
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': str(env('DB_ENGINE')),
+#         'NAME': str(env('DB_NAME')),
+#         'USER': str(env('DB_USER')),
+#         'PASSWORD': str(env('DB_PASSWORD')),
+#         'HOST': str(env('DB_HOST')),
+#         'PORT': int(env('DB_PORT')),
+#     }
+# }
 
 
 # Password validation
