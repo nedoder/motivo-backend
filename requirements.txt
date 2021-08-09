@@ -1,6 +1,0 @@
-django
-djangorestframework
-djangorestframework_simplejwt
-pillow
-django-celery
-django-celery-email
