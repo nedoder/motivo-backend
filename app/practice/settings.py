@@ -45,9 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework.authtoken',
-    'djcelery',
-    'djcelery_email'
+    'rest_framework.authtoken'
 
 ]
 
@@ -163,16 +161,4 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
-CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 
-EMAIL_HOST = 'SMTP_HOST'
-
-EMAIL_PORT = 'SMTP_PORT'
-
-EMAIL_HOST_USER = 'SMTP_USER'
-
-EMAIL_HOST_PASSWORD = 'SMTP_PASSWORD'
-
-EMAIL_USE_TLS = True # TLS settings
-
-EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'

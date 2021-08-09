@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import Profile, Challenge, Attempt
 from django.contrib.auth.models import User
-from practice.app.practice.celery import Mailer
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,14 +26,6 @@ class AttemptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attempt
         fields = ('user', 'challenge', 'file' )
-
-    def post(self, instance, validated_data):
-        if validated_data.items():
-            Mailer.send_messages(subject='My App account verification',
-                   context={'customer': self},
-                   to_emails=['nedoder89@gmail.com']);
-        instance.save()
-        return instance
 
 class UserEditSerializer(serializers.ModelSerializer):
     class Meta:
