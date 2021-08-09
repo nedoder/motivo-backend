@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'djcelery',
+    'djcelery_email'
+
 ]
 
 MIDDLEWARE = [
@@ -84,27 +87,27 @@ WSGI_APPLICATION = 'practice.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'USER': 'nedoder',
-        'PASSWORD': 'njanjanja',
-        'HOST': '127.0.0.1',
-        'PORT': '8000'
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': str(env('DB_ENGINE')),
-#         'NAME': str(env('DB_NAME')),
-#         'USER': str(env('DB_USER')),
-#         'PASSWORD': str(env('DB_PASSWORD')),
-#         'HOST': str(env('DB_HOST')),
-#         'PORT': int(env('DB_PORT')),
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#         'USER': 'nedoder',
+#         'PASSWORD': 'njanjanja',
+#         'HOST': '127.0.0.1',
+#         'PORT': '8000'
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': str(env('DB_ENGINE')),
+        'NAME': str(env('DB_NAME')),
+        'USER': str(env('DB_USER')),
+        'PASSWORD': str(env('DB_PASSWORD')),
+        'HOST': str(env('DB_HOST')),
+        'PORT': int(env('DB_PORT')),
+    }
+}
 
 
 # Password validation
@@ -149,9 +152,27 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10,
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
+
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'
+
+EMAIL_HOST = 'SMTP_HOST'
+
+EMAIL_PORT = 'SMTP_PORT'
+
+EMAIL_HOST_USER = 'SMTP_USER'
+
+EMAIL_HOST_PASSWORD = 'SMTP_PASSWORD'
+
+EMAIL_USE_TLS = True # TLS settings
+
+EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'

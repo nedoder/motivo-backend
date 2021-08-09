@@ -46,7 +46,7 @@ services:
         
 
     nginx_django:
-        container_name: ${CONTAINER_NAME}_nginx_django
+        container_name: ${CONTAINER_NAME}nginx_django
         build:
             dockerfile: ./Nginx.Dockerfile
             context: .
