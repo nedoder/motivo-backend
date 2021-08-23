@@ -17,7 +17,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class ProfileViewSet(viewsets.ModelViewSet):
 	permission_classes = (IsAuthenticated,)
-	queryset = Profile.objects.all().order_by('collected_coins')
+	queryset = Profile.objects.all().order_by('-collected_coins')
 	serializer_class = ProfileSerializer
 
 class ChallengeViewSet(viewsets.ModelViewSet):

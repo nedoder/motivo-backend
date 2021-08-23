@@ -5,3 +5,4 @@ pillow
 gunicorn==19.9.0
 django-environ
 psycopg2
+django-cors-headers
