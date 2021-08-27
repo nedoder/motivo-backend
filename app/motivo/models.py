@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
+from model_utils import FieldTracker
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -28,6 +29,13 @@ class Attempt(models.Model):
     confirmed_by_admin = models.BooleanField(default=False)
     file = models.FileField(upload_to='uploads/attempts/', null=True, blank=True)
     date = models.DateTimeField(default=datetime.now)
+    tracker = FieldTracker()
+
+    def save(self, *args, **kwargs):
+        profile = Profile.objects.all().filter(user=self.user)
+        if self.tracker.has_changed('confirmed_by_admin') is True:
+            profile[0].collected_coins = profile[0].collected_coins + 1
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return str(self.user)

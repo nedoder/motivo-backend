@@ -18,7 +18,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class ProfileViewSet(viewsets.ModelViewSet):
 	permission_classes = (IsAuthenticated,)
 	queryset = Profile.objects.all().order_by('-collected_coins')
-	serializer_class = ProfileSerializer
+	serializer_class = UserSerializer
 
 class ChallengeViewSet(viewsets.ModelViewSet):
 	permission_classes = (IsAuthenticated,)
@@ -27,13 +27,15 @@ class ChallengeViewSet(viewsets.ModelViewSet):
 
 class CompletedViewSet(viewsets.ModelViewSet):
 	permission_classes = (IsAuthenticated,)
-	queryset = Attempt.objects.all().filter(confirmed_by_admin=False).order_by('date')
+	queryset = Attempt.objects.all().filter(confirmed_by_admin=True).order_by('date')
 	serializer_class = CompletedSerializer
+
 
 class AttemptViewSet(viewsets.ModelViewSet):
 	permission_classes = (IsAuthenticated,)
 	queryset = Attempt.objects.all()
 	serializer_class = AttemptSerializer
+
 
 class UserEditViewSet(viewsets.ModelViewSet):
 	permission_classes = (IsAuthenticated,)
