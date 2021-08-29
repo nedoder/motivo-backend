@@ -12,6 +12,11 @@ class UserSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ('user', 'initial_budget', 'annual_budget', 'title', 'collected_coins')
 
+class UserDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'email', 'username', )
+
 class ProfileSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
 
@@ -51,6 +56,13 @@ class AttemptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attempt
         fields = ('user', 'challenge', 'file', 'confirmed_by_admin' )
+        # depth = 1
+
+class PostAttemptSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attempt
+        fields = ('user', 'challenge', 'file', 'confirmed_by_admin')
+
 
 class UserEditSerializer(serializers.ModelSerializer):
     class Meta:

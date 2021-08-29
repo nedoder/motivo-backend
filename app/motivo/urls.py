@@ -5,6 +5,7 @@ from rest_framework_simplejwt import views as jwt_views
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
+router.register(r'userdata', views.UserDataViewSet, basename='userdata')
 router.register(r'profile', views.ProfileViewSet, basename='profile')
 router.register(r'ranking', views.RankingViewSet, basename='ranking')
 router.register(r'challenges', views.ChallengeViewSet, basename='challenges')

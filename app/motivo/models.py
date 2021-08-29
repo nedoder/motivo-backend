@@ -29,14 +29,14 @@ class Attempt(models.Model):
     confirmed_by_admin = models.BooleanField(default=False)
     file = models.FileField(upload_to='uploads/attempts/', null=True, blank=True)
     date = models.DateTimeField(default=datetime.now)
-    # tracker = FieldTracker()
-    #
-    # def save(self, *args, **kwargs):
-    #     attempt = Attempt.objects.get(id = self.id)
-    #     profile = Profile.objects.all().filter(user=self.user)
-    #     if attempt.tracker.has_changed('confirmed_by_admin') is True:
-    #         profile[0].collected_coins = profile[0].collected_coins + 1
-    #     super().save(*args, **kwargs)
+    tracker = FieldTracker()
+
+    def save(self, *args, **kwargs):
+        profile = self.user.profile
+        if self.tracker.has_changed('confirmed_by_admin') and not self.tracker.previous('confirmed_by_admin'):
+            profile.collected_coins += 1
+            profile.save()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return str(self.user)

@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 
-from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer, AttemptSerializer, UserEditSerializer, AwardsSerializer
+from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer, AttemptSerializer, UserEditSerializer, AwardsSerializer, PostAttemptSerializer, UserDataSerializer
 from .models import Profile, Challenge, Attempt, Awards
 from django.contrib.auth.models import User
 from rest_framework.response import Response
@@ -14,6 +14,17 @@ class UserViewSet(viewsets.ModelViewSet):
 	permission_classes = (IsAuthenticated,)
 	queryset = Profile.objects.all().order_by('initial_budget')
 	serializer_class = UserSerializer
+
+class UserDataViewSet(viewsets.ModelViewSet):
+	permission_classes = (IsAuthenticated,)
+	queryset = User.objects.all()
+	serializer_class = UserDataSerializer
+
+	def get_queryset(self):
+		user = self.request.user
+		if user.is_authenticated:
+			return User.objects.filter(id=user.id)
+		raise PermissionDenied()
 
 class ProfileViewSet(viewsets.ModelViewSet):
 	permission_classes = (IsAuthenticated,)
@@ -41,9 +52,8 @@ class AttemptViewSet(viewsets.ModelViewSet):
 	queryset = Attempt.objects.all()
 	serializer_class = AttemptSerializer
 
-	def post(self, request):
-		user_id = data.request.__getitem__('user_id')
-		serializer = AttemptSerializer(user_id, data=request.data)
+	def create(self, request, *args, **kwargs):
+		serializer = PostAttemptSerializer(data=request.data)
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
