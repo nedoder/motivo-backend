@@ -76,22 +76,22 @@ class CollectedAwardsViewSet(viewsets.ModelViewSet):
 	queryset = CollectedAwards.objects.all()
 	serializer_class = CollectedAwardsSerializer
 
-	def create(self, request):
-		serializer = CollectedAwardsSerializer(data=request.data)
-		if serializer.is_valid():
-			serializer.save()
-			user = request.data.user
-		# print(user)
-		# profile = Profile.objects.get(user.id=user)
-		# award_id = request.data.get('id')
-		# award = Awards.objects.get(id=award_id)
-		# print(award)
-			award = request.data.awards
-		# id = request.data['id']
-		# print(id)
-			if user.collected_coins >= award.price_in_coins:
-				return Response(date={'status': 'You got the award'}, status=status.HTTP_200_OK)
-			else:
-				print(serialized.errors)
-				return Response(date={'status': 'You dont have enough coins for this award',
-								  'error': serialized.errors.get(status=status.HTTP_400_BAD_REQUEST)})
+	# def create(self, request):
+	# 	serializer = CollectedAwardsSerializer(data=request.data)
+	# 	if serializer.is_valid():
+	# 		serializer.save()
+	# 		user = request.data.user
+	# 	# print(user)
+	# 	# profile = Profile.objects.get(user.id=user)
+	# 	# award_id = request.data.get('id')
+	# 	# award = Awards.objects.get(id=award_id)
+	# 	# print(award)
+	# 		award = request.data.awards
+	# 	# id = request.data['id']
+	# 	# print(id)
+	# 		if user.collected_coins >= award.price_in_coins:
+	# 			return Response(date={'status': 'You got the award'}, status=status.HTTP_200_OK)
+	# 		else:
+	# 			print(serialized.errors)
+	# 			return Response(date={'status': 'You dont have enough coins for this award',
+	# 							  'error': serialized.errors.get(status=status.HTTP_400_BAD_REQUEST)})
