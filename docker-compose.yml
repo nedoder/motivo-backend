@@ -9,8 +9,8 @@ services:
             - POSTGRES_DB=postgres
             - POSTGRES_USER=postgres
             - POSTGRES_PASSWORD=postgres
-        networks:
-            - private
+#        networks:
+#            - private
 
     django:
         build:
@@ -24,58 +24,58 @@ services:
             - db
         expose:
             - 8000
-        # stdin_open: true
-        # tty: true
-        # restart: on-failure
-        networks:
-            - private
-            - traefik_webgateway
-        environment:
-            DEBUG: 'true'
-        labels:
-            - traefik.enable=true
-            - traefik.http.routers.${CONTAINER_NAME}-api-web.rule=Host(`${API_HOST}`)
-            - traefik.http.routers.${CONTAINER_NAME}-api-web.entrypoints=web
-            # - traefik.http.services.${CONTAINER_NAME}-api-web.loadbalancer.server.port=8000
-            # https is optional, delete next lines when you don't need this
-            - traefik.http.middlewares.${CONTAINER_NAME}-api-redirect-websecure.redirectscheme.scheme=https
-            - traefik.http.routers.${CONTAINER_NAME}-api-web.middlewares=${CONTAINER_NAME}-api-redirect-websecure
-            - traefik.http.routers.${CONTAINER_NAME}-api-websecure.rule=Host(`${API_HOST}`)
-            - traefik.http.routers.${CONTAINER_NAME}-api-websecure.tls=true 
-            - traefik.http.routers.${CONTAINER_NAME}-api-websecure.entrypoints=websecure
+#        # stdin_open: true
+#        # tty: true
+#        # restart: on-failure
+#        networks:
+#            - private
+#            - traefik_webgateway
+#        environment:
+#            DEBUG: 'true'
+#        labels:
+#            - traefik.enable=true
+#            - traefik.http.routers.${CONTAINER_NAME}-api-web.rule=Host(`${API_HOST}`)
+#            - traefik.http.routers.${CONTAINER_NAME}-api-web.entrypoints=web
+#            # - traefik.http.services.${CONTAINER_NAME}-api-web.loadbalancer.server.port=8000
+#            # https is optional, delete next lines when you don't need this
+#            - traefik.http.middlewares.${CONTAINER_NAME}-api-redirect-websecure.redirectscheme.scheme=https
+#            - traefik.http.routers.${CONTAINER_NAME}-api-web.middlewares=${CONTAINER_NAME}-api-redirect-websecure
+#            - traefik.http.routers.${CONTAINER_NAME}-api-websecure.rule=Host(`${API_HOST}`)
+#            - traefik.http.routers.${CONTAINER_NAME}-api-websecure.tls=true
+#            - traefik.http.routers.${CONTAINER_NAME}-api-websecure.entrypoints=websecure
         
 
-    nginx_django:
-        container_name: ${CONTAINER_NAME}nginx_django
-        build:
-            dockerfile: ./Nginx.Dockerfile
-            context: .
-        volumes:
-            # - .:/code
-            - ./app/practice/static:/static
-        depends_on:
-            - django
-        networks:
-            - private
-            - traefik_webgateway
-        # restart: "on-failure"
-        labels:
-            - traefik.enable=true
-            - traefik.http.routers.${CONTAINER_NAME}-static-web.rule=Host(`${STATIC_URL}`)
-            - traefik.http.routers.${CONTAINER_NAME}-static-web.entrypoints=web
-            # - traefik.http.services.${CONTAINER_NAME}-static-web.loadbalancer.server.port=8000
-            # https is optional, delete next lines when you don't need this
-            - traefik.http.middlewares.${CONTAINER_NAME}-static-redirect-websecure.redirectscheme.scheme=https
-            - traefik.http.routers.${CONTAINER_NAME}-static-web.middlewares=${CONTAINER_NAME}-static-redirect-websecure
-            - traefik.http.routers.${CONTAINER_NAME}-static-websecure.rule=Host(`${STATIC_URL}`)
-            - traefik.http.routers.${CONTAINER_NAME}-static-websecure.tls=true
-            - traefik.http.routers.${CONTAINER_NAME}-static-websecure.entrypoints=websecure
+#    nginx_django:
+#        container_name: ${CONTAINER_NAME}nginx_django
+#        build:
+#            dockerfile: ./Nginx.Dockerfile
+#            context: .
+#        volumes:
+#            # - .:/code
+#            - ./app/practice/static:/static
+#        depends_on:
+#            - django
+#        networks:
+#            - private
+#            - traefik_webgateway
+#        # restart: "on-failure"
+#        labels:
+#            - traefik.enable=true
+#            - traefik.http.routers.${CONTAINER_NAME}-static-web.rule=Host(`${STATIC_URL}`)
+#            - traefik.http.routers.${CONTAINER_NAME}-static-web.entrypoints=web
+#            # - traefik.http.services.${CONTAINER_NAME}-static-web.loadbalancer.server.port=8000
+#            # https is optional, delete next lines when you don't need this
+#            - traefik.http.middlewares.${CONTAINER_NAME}-static-redirect-websecure.redirectscheme.scheme=https
+#            - traefik.http.routers.${CONTAINER_NAME}-static-web.middlewares=${CONTAINER_NAME}-static-redirect-websecure
+#            - traefik.http.routers.${CONTAINER_NAME}-static-websecure.rule=Host(`${STATIC_URL}`)
+#            - traefik.http.routers.${CONTAINER_NAME}-static-websecure.tls=true
+#            - traefik.http.routers.${CONTAINER_NAME}-static-websecure.entrypoints=websecure
 
-networks:
-    traefik_webgateway:
-        external: true
-    private:
-        driver: bridge
+#networks:
+#    traefik_webgateway:
+#        external: true
+#    private:
+#        driver: bridge
 
 volumes:
     redis:

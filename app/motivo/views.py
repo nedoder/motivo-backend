@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
-from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer, AttemptSerializer, UserEditSerializer, AwardsSerializer, PostAttemptSerializer, UserDataSerializer
-from .models import Profile, Challenge, Attempt, Awards
+from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer, AttemptSerializer, UserEditSerializer, AwardsSerializer, PostAttemptSerializer, UserDataSerializer, CollectedAwardsSerializer
+from .models import Profile, Challenge, Attempt, Awards, CollectedAwards
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -65,23 +65,33 @@ class UserEditViewSet(viewsets.ModelViewSet):
 	queryset = User.objects.all()
 	serializer_class = UserEditSerializer
 
-	def put(self, request):
-
-		id = request.data['id']
-		user = User.objects.get(id=id)
-		serialized = UserEditSerializer(user, data=request.data)
-
-		if serialized.is_valid():
-			serialized.update(user, serialized.validated_data)
-			return Response(data={"status": "api_user_update_ok"}, status=status.HTTP_200_OK)
-
-		else:
-			print(serialized.errors)
-			return Response(data={"status": "api_user_update_failed", "error": serialized.errors.get('email')[0]},
-							status=status.HTTP_400_BAD_REQUEST)
-
-
 class AwardsViewSet(viewsets.ModelViewSet):
 	permission_classes = (IsAuthenticated,)
 	queryset = Awards.objects.all()
 	serializer_class = AwardsSerializer
+
+
+class CollectedAwardsViewSet(viewsets.ModelViewSet):
+	permission_classes = (IsAuthenticated,)
+	queryset = CollectedAwards.objects.all()
+	serializer_class = CollectedAwardsSerializer
+
+	def create(self, request):
+		serializer = CollectedAwardsSerializer(data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			user = request.data.user
+		# print(user)
+		# profile = Profile.objects.get(user.id=user)
+		# award_id = request.data.get('id')
+		# award = Awards.objects.get(id=award_id)
+		# print(award)
+			award = request.data.awards
+		# id = request.data['id']
+		# print(id)
+			if user.collected_coins >= award.price_in_coins:
+				return Response(date={'status': 'You got the award'}, status=status.HTTP_200_OK)
+			else:
+				print(serialized.errors)
+				return Response(date={'status': 'You dont have enough coins for this award',
+								  'error': serialized.errors.get(status=status.HTTP_400_BAD_REQUEST)})

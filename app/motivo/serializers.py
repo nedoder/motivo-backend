@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Profile, Challenge, Attempt, Awards
+from .models import Profile, Challenge, Attempt, Awards, CollectedAwards
 from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
@@ -67,29 +67,16 @@ class PostAttemptSerializer(serializers.ModelSerializer):
 class UserEditSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email', 'password', 'username' )
+        fields = ('first_name', 'last_name', 'password', 'email', 'username' )
 
-    # def update(self, instance, validated_data):
-    #     for attr, value in validated_data.items():
-    #         if attr == 'password':
-    #             instance.set_password(value)
-    #         else:
-    #             setattr(instance, attr, value)
-    #     instance.save()
-    #     return instance
-
-    def put(self,required):
-        id = request.data['id']
-        user = User.objects.get(id=id)
-        serialized = UserEditSerializer(user, data = request.data)
-
-        if serialized.is_valid():
-            serialized.update(user, serialized.validated_data)
-            return Response(date={'status':'api user update ok'}, status=status.HTTP_200_OK)
-        else:
-            print(serialized.errors)
-            return Response(date={'status': 'api user update failed', 'error': serialized.errors.get(status=status.HTTP_400_BAD_REQUEST)})
-
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            if attr == 'password':
+                instance.set_password(value)
+            else:
+                setattr(instance, attr, value)
+        instance.save()
+        return instance
 
 class AwardsSerializer(serializers.ModelSerializer):
     challenge = serializers.SerializerMethodField()
@@ -100,5 +87,10 @@ class AwardsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Awards
-        fields = ('challenge', 'title', 'description', 'price_in_coins', 'image' )
+        fields = ('id', 'challenge', 'title', 'description', 'price_in_coins', 'image' )
+
+class CollectedAwardsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CollectedAwards
+        fields = ('user', 'awards')
 
