@@ -1,11 +1,11 @@
 from rest_framework import viewsets
 
-from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer, AttemptSerializer, UserEditSerializer, AwardsSerializer, PostAttemptSerializer, UserDataSerializer, CollectedAwardsSerializer
+from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer, AttemptSerializer, UserEditSerializer, AwardsSerializer, PostAttemptSerializer, UserDataSerializer, CollectedAwardsSerializer, AttemptImageSerializer, UsersCollectedAwardsSerializer
 from .models import Profile, Challenge, Attempt, Awards, CollectedAwards
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.views import APIView
 from rest_framework import status
 
 
@@ -70,28 +70,44 @@ class AwardsViewSet(viewsets.ModelViewSet):
 	queryset = Awards.objects.all()
 	serializer_class = AwardsSerializer
 
+class UsersAwardsViewSet(viewsets.ModelViewSet):
+	permission_classes = (IsAuthenticated,)
+	queryset = CollectedAwards.objects.all()
+	serializer_class = UsersCollectedAwardsSerializer
+
 
 class CollectedAwardsViewSet(viewsets.ModelViewSet):
 	permission_classes = (IsAuthenticated,)
 	queryset = CollectedAwards.objects.all()
 	serializer_class = CollectedAwardsSerializer
 
-	# def create(self, request):
-	# 	serializer = CollectedAwardsSerializer(data=request.data)
-	# 	if serializer.is_valid():
-	# 		serializer.save()
-	# 		user = request.data.user
-	# 	# print(user)
-	# 	# profile = Profile.objects.get(user.id=user)
-	# 	# award_id = request.data.get('id')
-	# 	# award = Awards.objects.get(id=award_id)
-	# 	# print(award)
-	# 		award = request.data.awards
-	# 	# id = request.data['id']
-	# 	# print(id)
-	# 		if user.collected_coins >= award.price_in_coins:
-	# 			return Response(date={'status': 'You got the award'}, status=status.HTTP_200_OK)
-	# 		else:
-	# 			print(serialized.errors)
-	# 			return Response(date={'status': 'You dont have enough coins for this award',
-	# 							  'error': serialized.errors.get(status=status.HTTP_400_BAD_REQUEST)})
+	def create(self, request, *args, **kwargs):
+		serializer = CollectedAwardsSerializer(data=request.data)
+		if serializer.is_valid():
+			user = request.data.get("user")
+			print('------')
+			print(user)
+			print('------')
+			profile = Profile.objects.get(user_id = user)
+			awards = request.data.get("awards")
+			award = Awards.objects.get(id = awards)
+			print(awards)
+			if profile.collected_coins >= award.price_in_coins:
+				profile.collected_coins = profile.collected_coins - award.price_in_coins
+				profile.save()
+				serializer.save()
+				return Response({"message":"You got the award"}, status=status.HTTP_201_CREATED)
+		print(awards)
+		return Response({"message":"You have not enough coins"}, status=status.HTTP_400_BAD_REQUEST)
+
+class DisplayImageView(APIView):
+    permission_classes = (IsAuthenticated,)
+	#serializer_class = AttemptImageSerializer
+
+    def get(self, request, objects_or_locations, imagename):
+        """
+        Endpoint displays particular image.
+        """
+        image_path = f'photos/{objects_or_locations}/{imagename}'
+        image_data = open(image_path, "rb").read()
+        return HttpResponse(image_data, content_type="image/*")

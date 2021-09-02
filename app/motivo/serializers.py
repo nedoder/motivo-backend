@@ -35,7 +35,7 @@ class CompletedSerializer(serializers.ModelSerializer):
     challenge = serializers.SerializerMethodField()
 
     def get_challenge(self, obj):
-        return {"title":obj.challenge.title, "id":obj.challenge.id}
+        return {"title":obj.challenge.title, "id":obj.challenge.id, "coins":obj.challenge.coins_to_win, "description":obj.challenge.description}
 
 
     class Meta:
@@ -46,7 +46,7 @@ class AttemptSerializer(serializers.ModelSerializer):
     challenge = serializers.SerializerMethodField()
 
     def get_challenge(self, obj):
-        return {"title":obj.challenge.title, "id":obj.challenge.id}
+        return {"title":obj.challenge.title, "id":obj.challenge.id, "coins":obj.challenge.coins_to_win, "description":obj.challenge.description }
 
     user = serializers.SerializerMethodField()
 
@@ -87,10 +87,23 @@ class AwardsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Awards
-        fields = ('id', 'challenge', 'title', 'description', 'price_in_coins', 'image' )
+        fields = ('id', 'challenge', 'title', 'description', 'price_in_coins', 'image')
 
 class CollectedAwardsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CollectedAwards
         fields = ('user', 'awards')
+        #depth = 1
+
+class UsersCollectedAwardsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CollectedAwards
+        fields = ('user', 'awards')
+        depth = 1
+
+
+class AttemptImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attempt
+        fields = ('file',)
 
