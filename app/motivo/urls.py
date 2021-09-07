@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 from . import views
-from .views import DisplayImageView
+
 from rest_framework_simplejwt import views as jwt_views
 
 
@@ -25,6 +25,6 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
-    path('photos/<str:objects_or_locations>/<str:imagename>', DisplayImageView.as_view(), name="display-image"),
+
 ]
 

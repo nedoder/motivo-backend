@@ -1,12 +1,13 @@
 from rest_framework import viewsets
 
-from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer, AttemptSerializer, UserEditSerializer, AwardsSerializer, PostAttemptSerializer, UserDataSerializer, CollectedAwardsSerializer, AttemptImageSerializer, UsersCollectedAwardsSerializer
+from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer, AttemptSerializer, UserEditSerializer, AwardsSerializer, PostAttemptSerializer, UserDataSerializer, CollectedAwardsSerializer, UsersCollectedAwardsSerializer
 from .models import Profile, Challenge, Attempt, Awards, CollectedAwards
 from django.contrib.auth.models import User
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework import status
+from django.http import HttpResponse
 
 
 
@@ -101,13 +102,12 @@ class CollectedAwardsViewSet(viewsets.ModelViewSet):
 		return Response({"message":"You have not enough coins"}, status=status.HTTP_400_BAD_REQUEST)
 
 class DisplayImageView(APIView):
-    permission_classes = (IsAuthenticated,)
-	#serializer_class = AttemptImageSerializer
+    permission_classes = (AllowAny,)
 
-    def get(self, request, objects_or_locations, imagename):
+    def get(self, request, imagename):
         """
         Endpoint displays particular image.
         """
-        image_path = f'photos/{objects_or_locations}/{imagename}'
+        image_path = f'uploads/images/{imagename}'
         image_data = open(image_path, "rb").read()
         return HttpResponse(image_data, content_type="image/*")

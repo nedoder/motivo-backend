@@ -153,8 +153,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-MEDIA_ROOT = ('/practice/uploads/')
-MEDIA_URL = '/uploads/'
+MEDIA_URL = '/images/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "../../uploads")
+
 
 
 REST_FRAMEWORK = {
@@ -172,13 +173,13 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
 #
 # # CORS_ORIGIN_WHITELIST = [
 # #     'http://127.0.0.1:8080'
 # # ]
 #
-# CORS_ALLOW_ALL_ORIGINS = True
+#CORS_ALLOW_ALL_ORIGINS = True
 # CORS_ALLOW_CREDENTIALS = True
 
 # CORS_ALLOW_METHODS = (

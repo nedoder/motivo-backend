@@ -101,9 +101,3 @@ class UsersCollectedAwardsSerializer(serializers.ModelSerializer):
         fields = ('user', 'awards')
         depth = 1
 
-
-class AttemptImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Attempt
-        fields = ('file',)
-
