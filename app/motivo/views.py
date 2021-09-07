@@ -50,7 +50,7 @@ class CompletedViewSet(viewsets.ModelViewSet):
 
 class AttemptViewSet(viewsets.ModelViewSet):
 	permission_classes = (IsAuthenticated,)
-	queryset = Attempt.objects.all()
+	queryset = Attempt.objects.all().filter(confirmed_by_admin=False)
 	serializer_class = AttemptSerializer
 
 	def create(self, request, *args, **kwargs):
