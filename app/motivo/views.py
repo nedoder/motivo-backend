@@ -1,12 +1,13 @@
 from rest_framework import viewsets
 
-from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer, AttemptSerializer, UserEditSerializer, AwardsSerializer, PostAttemptSerializer, UserDataSerializer
-from .models import Profile, Challenge, Attempt, Awards
+from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer, AttemptSerializer, UserEditSerializer, AwardsSerializer, PostAttemptSerializer, UserDataSerializer, CollectedAwardsSerializer, UsersCollectedAwardsSerializer
+from .models import Profile, Challenge, Attempt, Awards, CollectedAwards
 from django.contrib.auth.models import User
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.views import APIView
 from rest_framework import status
+from django.http import HttpResponse
 
 
 
@@ -65,23 +66,48 @@ class UserEditViewSet(viewsets.ModelViewSet):
 	queryset = User.objects.all()
 	serializer_class = UserEditSerializer
 
-	def put(self, request):
-
-		id = request.data['id']
-		user = User.objects.get(id=id)
-		serialized = UserEditSerializer(user, data=request.data)
-
-		if serialized.is_valid():
-			serialized.update(user, serialized.validated_data)
-			return Response(data={"status": "api_user_update_ok"}, status=status.HTTP_200_OK)
-
-		else:
-			print(serialized.errors)
-			return Response(data={"status": "api_user_update_failed", "error": serialized.errors.get('email')[0]},
-							status=status.HTTP_400_BAD_REQUEST)
-
-
 class AwardsViewSet(viewsets.ModelViewSet):
 	permission_classes = (IsAuthenticated,)
 	queryset = Awards.objects.all()
 	serializer_class = AwardsSerializer
+
+class UsersAwardsViewSet(viewsets.ModelViewSet):
+	permission_classes = (IsAuthenticated,)
+	queryset = CollectedAwards.objects.all()
+	serializer_class = UsersCollectedAwardsSerializer
+
+
+class CollectedAwardsViewSet(viewsets.ModelViewSet):
+	permission_classes = (IsAuthenticated,)
+	queryset = CollectedAwards.objects.all()
+	serializer_class = CollectedAwardsSerializer
+
+	def create(self, request, *args, **kwargs):
+		serializer = CollectedAwardsSerializer(data=request.data)
+		if serializer.is_valid():
+			user = request.data.get("user")
+			print('------')
+			print(user)
+			print('------')
+			profile = Profile.objects.get(user_id = user)
+			awards = request.data.get("awards")
+			award = Awards.objects.get(id = awards)
+			print(awards)
+			if profile.collected_coins >= award.price_in_coins:
+				profile.collected_coins = profile.collected_coins - award.price_in_coins
+				profile.save()
+				serializer.save()
+				return Response({"message":"You got the award"}, status=status.HTTP_201_CREATED)
+		print(awards)
+		return Response({"message":"You have not enough coins"}, status=status.HTTP_400_BAD_REQUEST)
+
+class DisplayImageView(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request, imagename):
+        """
+        Endpoint displays particular image.
+        """
+        image_path = f'uploads/images/{imagename}'
+        image_data = open(image_path, "rb").read()
+        return HttpResponse(image_data, content_type="image/*")

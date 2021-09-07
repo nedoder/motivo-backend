@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import environ
 
+import os
+import environ
+
 env = environ.Env()
 # reading .env file
 environ.Env.read_env()
@@ -149,6 +152,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
+MEDIA_URL = '/images/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "../../uploads")
+
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -166,14 +173,14 @@ REST_FRAMEWORK = {
 }
 
 # CORS_ORIGIN_ALLOW_ALL = True
-
-# CORS_ORIGIN_WHITELIST = [
-#     'http://127.0.0.1:8080'
-# ]
-
-# CORS_ALLOW_ALL_ORIGINS = True
-# CORS_ALLOW_CREDENTIALS = True
 #
+# # CORS_ORIGIN_WHITELIST = [
+# #     'http://127.0.0.1:8080'
+# # ]
+#
+#CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_CREDENTIALS = True
+
 # CORS_ALLOW_METHODS = (
 #     'DELETE',
 #     'GET',
@@ -181,8 +188,8 @@ REST_FRAMEWORK = {
 #     'PATCH',
 #     'POST',
 #     'PUT',
-# )
-# CORS_ALLOW_HEADERS = [
+# # )
+# # CORS_ALLOW_HEADERS = [
 #     "accept",
 #     "accept-encoding",
 #     "authorization",
@@ -196,7 +203,7 @@ REST_FRAMEWORK = {
 #     'content-language',
 #     'Content-Type'
 # ]
-#
-#
+
+
 
 

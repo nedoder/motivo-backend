@@ -51,6 +51,14 @@ class Awards(models.Model):
     def __str__(self):
         return self.title
 
+class CollectedAwards(models.Model):
+    awards = models.ForeignKey(Awards, on_delete=models.CASCADE, blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return str(self.id)
+
+
 
 
 
