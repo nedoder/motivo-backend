@@ -11,7 +11,7 @@ class Profile(models.Model):
     annual_budget = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.title
+        return str(self.title) + ' ' + str(self.user)  + ' ' + str(self.collected_coins)
 
 class Challenge(models.Model):
     title = models.CharField(max_length=100, default='')
@@ -20,7 +20,7 @@ class Challenge(models.Model):
     image = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
 
     def __str__(self):
-        return self.title
+        return str(self.title) + ' ' + str(self.coins_to_win)
 
 class Attempt(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -34,13 +34,17 @@ class Attempt(models.Model):
     def save(self, *args, **kwargs):
         profile = self.user.profile
         challenge = self.challenge
-        if self.tracker.has_changed('confirmed_by_admin') and not self.tracker.previous('confirmed_by_admin'):
+        print('-----------------')
+        print(self.tracker.has_changed('confirmed_by_admin'))
+        print(self.tracker.previous('confirmed_by_admin'))
+        print('-----------------')
+        if self.tracker.has_changed('confirmed_by_admin') and (self.tracker.previous('confirmed_by_admin')) is False:
             profile.collected_coins += challenge.coins_to_win
             profile.save()
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return str(self.user)
+        return str(self.user) + ' ' + str(self.challenge) + ' ' + str(self.confirmed_by_admin)
 
 class Awards(models.Model):
     challenge = models.OneToOneField(Challenge, on_delete=models.CASCADE)
@@ -50,7 +54,7 @@ class Awards(models.Model):
     image = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
 
     def __str__(self):
-        return self.title
+        return  str(self.challenge) + ' ' + str(self.title) + ' ' + str(self.price_in_coins)
 
 class CollectedAwards(models.Model):
     awards = models.ForeignKey(Awards, on_delete=models.CASCADE, blank=True, null=True)
