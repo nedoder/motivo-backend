@@ -40,7 +40,7 @@ ALLOWED_HOSTS = list(str(env("ALLOWED_HOSTS")).split(','))
 # Application definition
 
 INSTALLED_APPS = [
-    'motivo.apps.MotivoConfig',
+    #'motivo.apps.MotivoConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'motivo'
 
 ]
 
