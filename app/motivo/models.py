@@ -33,8 +33,9 @@ class Attempt(models.Model):
 
     def save(self, *args, **kwargs):
         profile = self.user.profile
+        challenge = self.challenge
         if self.tracker.has_changed('confirmed_by_admin') and not self.tracker.previous('confirmed_by_admin'):
-            profile.collected_coins += 1
+            profile.collected_coins += challenge.coins_to_win
             profile.save()
         super().save(*args, **kwargs)
 
