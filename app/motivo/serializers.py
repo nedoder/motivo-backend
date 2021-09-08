@@ -24,7 +24,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         return {"username": obj.user.username, "id": obj.user.id, "first_name": obj.user.first_name, "last_name" : obj.user.last_name, "email":obj.user.email}
     class Meta:
         model = Profile
-        fields = ('user', 'title', 'collected_coins', 'initial_budget', 'annual_budget')
+        fields = ('id', 'user', 'title', 'collected_coins', 'initial_budget', 'annual_budget')
 
 class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:
