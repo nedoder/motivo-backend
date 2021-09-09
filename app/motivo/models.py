@@ -17,6 +17,7 @@ class Challenge(models.Model):
     title = models.CharField(max_length=100, default='')
     coins_to_win = models.IntegerField(default=0)
     description = models.CharField(max_length=100, null=True, blank=True)
+    file = models.FileField(upload_to='uploads/attempts/', null=True, blank=True)
     image = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
 
     def __str__(self):
@@ -45,6 +46,7 @@ class Attempt(models.Model):
 
     class Meta:
         verbose_name = "To be approved"
+        verbose_name_plural = "To be approved"
 
     def __str__(self):
         return 'User: ' + str(self.user) + ', Challenge: ' + str(self.challenge) + ', Confirmed by admin: ' + str(self.confirmed_by_admin)
