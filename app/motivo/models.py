@@ -11,7 +11,7 @@ class Profile(models.Model):
     annual_budget = models.IntegerField(default=0)
 
     def __str__(self):
-        return 'Title: ' + str(self.title) + ' User: ' + str(self.user)  + ' Collected coins: ' + str(self.collected_coins)
+        return 'Title: ' + str(self.title) + ', User: ' + str(self.user)  + ', Collected coins: ' + str(self.collected_coins)
 
 class Challenge(models.Model):
     title = models.CharField(max_length=100, default='')
@@ -20,7 +20,7 @@ class Challenge(models.Model):
     image = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
 
     def __str__(self):
-        return str(self.title) + ' ' + str(self.coins_to_win)
+        return 'Title: ' + str(self.title) + ', Coins to win: ' + str(self.coins_to_win)
 
 class Attempt(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -44,7 +44,7 @@ class Attempt(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return str(self.user) + ' ' + str(self.challenge) + ' ' + str(self.confirmed_by_admin)
+        return 'User: ' + str(self.user) + ', Challenge: ' + str(self.challenge) + ', Confirmed by admin: ' + str(self.confirmed_by_admin)
 
 class Awards(models.Model):
     challenge = models.OneToOneField(Challenge, on_delete=models.CASCADE)
@@ -54,7 +54,7 @@ class Awards(models.Model):
     image = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
 
     def __str__(self):
-        return  str(self.challenge) + ' ' + str(self.title) + ' ' + str(self.price_in_coins)
+        return  'Challenge: ' + str(self.challenge) + ', Title: ' + str(self.title) + ', Price in coins: ' + str(self.price_in_coins)
 
 class CollectedAwards(models.Model):
     awards = models.ForeignKey(Awards, on_delete=models.CASCADE, blank=True, null=True)
