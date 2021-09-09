@@ -43,18 +43,20 @@ class Attempt(models.Model):
             profile.save()
         super().save(*args, **kwargs)
 
+    class Meta:
+        verbose_name = "To be approved"
+
     def __str__(self):
         return 'User: ' + str(self.user) + ', Challenge: ' + str(self.challenge) + ', Confirmed by admin: ' + str(self.confirmed_by_admin)
 
 class Awards(models.Model):
-    challenge = models.OneToOneField(Challenge, on_delete=models.CASCADE)
     title = models.CharField(max_length=100, default='')
     description = models.CharField(max_length=100, null=True, blank=True)
     price_in_coins = models.IntegerField(default=0)
     image = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
 
     def __str__(self):
-        return  'Challenge: ' + str(self.challenge) + ', Title: ' + str(self.title) + ', Price in coins: ' + str(self.price_in_coins)
+        return  'Title: ' + str(self.title) + ', Price in coins: ' + str(self.price_in_coins)
 
 class CollectedAwards(models.Model):
     awards = models.ForeignKey(Awards, on_delete=models.CASCADE, blank=True, null=True)
