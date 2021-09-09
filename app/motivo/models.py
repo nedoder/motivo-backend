@@ -11,7 +11,7 @@ class Profile(models.Model):
     annual_budget = models.IntegerField(default=0)
 
     def __str__(self):
-        return str(self.title) + ' ' + str(self.user)  + ' ' + str(self.collected_coins)
+        return 'Title: ' + str(self.title) + ' User: ' + str(self.user)  + ' Collected coins: ' + str(self.collected_coins)
 
 class Challenge(models.Model):
     title = models.CharField(max_length=100, default='')
