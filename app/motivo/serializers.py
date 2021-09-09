@@ -79,15 +79,9 @@ class UserEditSerializer(serializers.ModelSerializer):
         return instance
 
 class AwardsSerializer(serializers.ModelSerializer):
-    challenge = serializers.SerializerMethodField()
-
-    def get_challenge(self, obj):
-        return {"title":obj.challenge.title, "id":obj.challenge.id}
-
-
     class Meta:
         model = Awards
-        fields = ('id', 'challenge', 'title', 'description', 'price_in_coins', 'image')
+        fields = ('id', 'title', 'description', 'price_in_coins', 'image')
 
 class CollectedAwardsSerializer(serializers.ModelSerializer):
     class Meta:
