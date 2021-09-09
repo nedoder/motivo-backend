@@ -29,7 +29,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Challenge
-        fields = ('id', 'title', 'coins_to_win', 'description', 'image')
+        fields = ('id', 'title', 'coins_to_win', 'description', 'image', 'file')
 
 class CompletedSerializer(serializers.ModelSerializer):
     challenge = serializers.SerializerMethodField()
