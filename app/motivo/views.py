@@ -13,7 +13,7 @@ from django.http import HttpResponse
 
 class UserViewSet(viewsets.ModelViewSet):
 	permission_classes = (IsAuthenticated,)
-	queryset = Profile.objects.all().order_by('initial_budget')
+	queryset = Profile.objects.all().order_by('initial_budget_gross')
 	serializer_class = UserSerializer
 
 class UserDataViewSet(viewsets.ModelViewSet):
@@ -34,7 +34,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 class RankingViewSet(viewsets.ModelViewSet):
 	permission_classes = (IsAuthenticated,)
-	queryset = Profile.objects.all().order_by('-collected_coins')
+	queryset = Profile.objects.all().order_by('-collected_coins_gross')
 	serializer_class = UserSerializer
 
 class ChallengeViewSet(viewsets.ModelViewSet):

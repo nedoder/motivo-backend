@@ -7,8 +7,9 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     collected_coins = models.IntegerField(default=0)
-    initial_budget = models.IntegerField(default=0)
-    annual_budget = models.IntegerField(default=0)
+    collected_coins_gross = models.IntegerField(default=0)
+    initial_budget_gross = models.IntegerField(default=0)
+    annual_budget_gross = models.IntegerField(default=0)
 
     def __str__(self):
         return 'Title: ' + str(self.title) + ', User: ' + str(self.user)  + ', Collected coins: ' + str(self.collected_coins)
@@ -57,17 +58,23 @@ class Awards(models.Model):
     price_in_coins = models.IntegerField(default=0)
     image = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
 
+
     def __str__(self):
         return  'Title: ' + str(self.title) + ', Price in coins: ' + str(self.price_in_coins)
+
+    class Meta:
+        verbose_name_plural = "Awards"
 
 class CollectedAwards(models.Model):
     awards = models.ForeignKey(Awards, on_delete=models.CASCADE, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    user_note = models.CharField(max_length=100, default='')
 
     def __str__(self):
         return str(self.id)
 
-
+    class Meta:
+        verbose_name_plural = "Collected Awards"
 
 
 
