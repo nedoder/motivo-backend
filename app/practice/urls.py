@@ -23,8 +23,8 @@ from . import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('motivo.urls')),
-    path('images/uploads/images/<str:imagename>', DisplayImageView.as_view(), name="display-image"),
+    path('uploads/images/<str:imagename>', DisplayImageView.as_view(), name="display-image"),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

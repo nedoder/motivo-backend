@@ -7,3 +7,5 @@ django-environ
 psycopg2
 django-cors-headers
 django-model-utils
+django-celery
+django-celery-email
