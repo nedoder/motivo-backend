@@ -55,9 +55,8 @@ class AttemptViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             mail = Mailer()
             mail.send_messages(subject='Attempting the challenge',
-                               template='emails/customer_verification.html',
                                context={'customer': self},
-                               to_emails=[self.user.email])
+                               to_emails=['finalprojectreactnode@gmail.com'])
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

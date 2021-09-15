@@ -220,7 +220,7 @@ EMAIL_HOST_PASSWORD = 'finalProject123'
 
 EMAIL_USE_TLS = True # TLS settings
 
-EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
+#EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
 
 
 AUTH_USER_MODEL = 'motivo.Profile'
