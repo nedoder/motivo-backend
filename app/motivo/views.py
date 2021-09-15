@@ -1,59 +1,12 @@
 from rest_framework import viewsets
 from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer, AttemptSerializer, UserEditSerializer, AwardsSerializer, PostAttemptSerializer, UserDataSerializer, CollectedAwardsSerializer, UsersCollectedAwardsSerializer
 from .models import Profile, Challenge, Attempt, Awards, CollectedAwards
-from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework import status
 from django.http import HttpResponse
-from django.core import mail
-from django.core.mail import EmailMessage
-from django.template.loader import get_template
-
-
-class Mailer:
-    """
-    Send email messages helper class
-    """
-
-    def __init__(self, from_email=None):
-        # TODO setup the default from email
-        self.connection = mail.get_connection()
-        self.from_email = from_email
-
-    def send_messages(self, subject, template, context, to_emails):
-        messages = self.__generate_messages(subject, template, context, to_emails)
-        self.__send_mail(messages)
-
-    def __send_mail(self, mail_messages):
-        """
-        Send email messages
-        :param mail_messages:
-        :return:
-        """
-        self.connection.open()
-        self.connection.send_messages(mail_messages)
-        self.connection.close()
-
-    def __generate_messages(self, subject, template, context, to_emails):
-        """
-        Generate email message from Django template
-        :param subject: Email message subject
-        :param template: Email template
-        :param to_emails: to email address[es]
-        :return:
-        """
-        messages = []
-        message_template = get_template(template)
-        for recipient in to_emails:
-            message_content = message_template.render(context)
-            message = EmailMessage(subject, message_content, to=[recipient], from_email=self.from_email)
-            message.content_subtype = 'html'
-            messages.append(message)
-
-        return messages
-
+from .tasks import Mailer
 
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
@@ -62,13 +15,13 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class UserDataViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
-    queryset = User.objects.all()
+    queryset = Profile.objects.all()
     serializer_class = UserDataSerializer
 
     def get_queryset(self):
         user = self.request.user
         if user.is_authenticated:
-            return User.objects.filter(id=user.id)
+            return Profile.objects.filter(id=user.id)
         raise PermissionDenied()
 
 class ProfileViewSet(viewsets.ModelViewSet):
@@ -79,7 +32,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 class RankingViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = Profile.objects.all().order_by('-collected_coins_gross')
-    serializer_class = UserSerializer
+    serializer_class = ProfileSerializer
 
 class ChallengeViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
@@ -112,7 +65,7 @@ class AttemptViewSet(viewsets.ModelViewSet):
 
 class UserEditViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
-    queryset = User.objects.all()
+    queryset = Profile.objects.all()
     serializer_class = UserEditSerializer
 
 class AwardsViewSet(viewsets.ModelViewSet):
@@ -138,7 +91,7 @@ class CollectedAwardsViewSet(viewsets.ModelViewSet):
             print('------')
             print(user)
             print('------')
-            profile = Profile.objects.get(user_id = user)
+            profile = Profile.objects.get(id = user)
             awards = request.data.get("awards")
             award = Awards.objects.get(id = awards)
             print(awards)

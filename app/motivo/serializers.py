@@ -1,30 +1,30 @@
 from rest_framework import serializers
 from .models import Profile, Challenge, Attempt, Awards, CollectedAwards
-from django.contrib.auth.models import User
+
 
 class UserSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
-
-    def get_user(self, obj):
-        return {"username":obj.user.username, "id":obj.user.id}
+    # user = serializers.SerializerMethodField()
+    #
+    # def get_user(self, obj):
+    #     return {"username":obj.user.username, "id":obj.user.id}
 
     class Meta:
         model = Profile
-        fields = ('user', 'initial_budget_gross', 'annual_budget_gross', 'title', 'collected_coins', 'collected_coins_gross')
+        fields = ('id', 'first_name', 'last_name', 'email', 'username', 'initial_budget_gross', 'annual_budget_gross', 'title', 'collected_coins', 'collected_coins_gross')
 
 class UserDataSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Profile
         fields = ('id', 'first_name', 'last_name', 'email', 'username', )
 
 class ProfileSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
+    # user = serializers.SerializerMethodField()
 
-    def get_user(self, obj):
-        return {"username": obj.user.username, "id": obj.user.id, "first_name": obj.user.first_name, "last_name" : obj.user.last_name, "email":obj.user.email}
+    # def get_user(self, obj):
+    #     return {"username": obj.user.username, "id": obj.user.id, "first_name": obj.user.first_name, "last_name" : obj.user.last_name, "email":obj.user.email}
     class Meta:
         model = Profile
-        fields = ('id', 'user', 'title', 'collected_coins', 'collected_coins_gross', 'initial_budget_gross', 'annual_budget_gross')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'title', 'collected_coins', 'collected_coins_gross', 'initial_budget_gross', 'annual_budget_gross')
 
 class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -66,7 +66,7 @@ class PostAttemptSerializer(serializers.ModelSerializer):
 
 class UserEditSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Profile
         fields = ('first_name', 'last_name', 'password', 'email', 'username' )
 
     def update(self, instance, validated_data):

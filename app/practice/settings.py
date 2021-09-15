@@ -50,8 +50,8 @@ INSTALLED_APPS = [
     'rest_framework',
     #'rest_framework.authtoken',
     'corsheaders',
-    'djcelery',
-    'djcelery_email',
+    #'djcelery',
+    #'djcelery_email',
 
 ]
 
@@ -210,17 +210,17 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 
-EMAIL_HOST = 'SMTP_HOST'
+EMAIL_HOST = 'smtp.gmail.com'
 
-EMAIL_PORT = 'SMTP_PORT'
+EMAIL_PORT = '587'
 
-EMAIL_HOST_USER = 'SMTP_USER'
+EMAIL_HOST_USER = 'finalprojectreactnode@gmail.com'
 
-EMAIL_HOST_PASSWORD = 'SMTP_PASSWORD'
+EMAIL_HOST_PASSWORD = 'finalProject123'
 
 EMAIL_USE_TLS = True # TLS settings
 
 EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
 
 
-
+AUTH_USER_MODEL = 'motivo.Profile'

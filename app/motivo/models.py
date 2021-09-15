@@ -2,17 +2,58 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 from model_utils import FieldTracker
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.utils.translation import ugettext_lazy as _
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+class ProfileManager(BaseUserManager):
+    """Define a model manager for User model with no username field."""
+
+    use_in_migrations = True
+
+    def _create_user(self, email, password, **extra_fields):
+        """Create and save a User with the given email and password."""
+        if not email:
+            raise ValueError('The given email must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email, password=None, **extra_fields):
+        """Create and save a regular User with the given email and password."""
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(email, password, **extra_fields)
+
+    def create_superuser(self, email, password, **extra_fields):
+        """Create and save a SuperUser with the given email and password."""
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self._create_user(email, password, **extra_fields)
+
+class Profile(AbstractUser):
+    username = None
+    email = models.EmailField(_('email address'), unique=True)
     title = models.CharField(max_length=100)
     collected_coins_gross = models.IntegerField(default=0)
     collected_coins = models.IntegerField(default=0)
     initial_budget_gross = models.IntegerField(default=0)
     annual_budget_gross = models.IntegerField(default=0)
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    objects = ProfileManager()
+
     def __str__(self):
-        return 'Title: ' + str(self.title) + ', User: ' + str(self.user)  + ', Collected coins: ' + str(self.collected_coins)
+        return str(self.email)
 
 class Challenge(models.Model):
     title = models.CharField(max_length=100, default='')
@@ -22,7 +63,7 @@ class Challenge(models.Model):
     image = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
 
     def __str__(self):
-        return 'Title: ' + str(self.title) + ', Coins to win: ' + str(self.coins_to_win)
+        return  str(self.title)
 
 
 ATTEMPT_CHOICES = (
@@ -33,7 +74,7 @@ ATTEMPT_CHOICES = (
     ("5", "5")
 )
 class Attempt(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     description = models.CharField(max_length=100, null=True, blank=True)
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE, default=0)
     confirmed_by_admin = models.BooleanField(default=False)
@@ -47,7 +88,7 @@ class Attempt(models.Model):
     tracker = FieldTracker()
 
     def save(self, *args, **kwargs):
-        profile = self.user.profile
+        profile = self.user
         challenge = self.challenge
         print('-----------------')
         print(self.tracker.has_changed('confirmed_by_admin'))
@@ -64,7 +105,7 @@ class Attempt(models.Model):
         verbose_name_plural = "To be approved"
 
     def __str__(self):
-        return 'User: ' + str(self.user) + ', Challenge: ' + str(self.challenge) + ', Confirmed by admin: ' + str(self.confirmed_by_admin)
+        return  str(self.description)
 
 
 USED_CHOICES = (
@@ -86,18 +127,18 @@ class Awards(models.Model):
     )
 
     def __str__(self):
-        return  'Title: ' + str(self.title) + ', Price in coins: ' + str(self.price_in_coins)
+        return str(self.title)
 
     class Meta:
         verbose_name_plural = "Awards"
 
 class CollectedAwards(models.Model):
     awards = models.ForeignKey(Awards, on_delete=models.CASCADE, blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE, blank=True, null=True)
     user_note = models.CharField(max_length=100, default='')
 
     def __str__(self):
-        return str(self.id)
+        return str(self.awards)
 
     class Meta:
         verbose_name_plural = "Collected Awards"
