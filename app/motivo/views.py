@@ -7,7 +7,11 @@ from rest_framework.views import APIView
 from rest_framework import status
 from django.http import HttpResponse
 from .tasks import Mailer
-from django.db.models import Count
+from django.db.models import Q, Count
+import json
+from django.http import JsonResponse
+from django.core import serializers
+
 
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
@@ -40,6 +44,28 @@ class ChallengeViewSet(viewsets.ModelViewSet):
     queryset = Challenge.objects.all().order_by('title')
     serializer_class = ChallengeSerializer
 
+    def list(self, request):
+        challenges = Challenge.objects.annotate(attempted_by_user=Count('attempts', filter=Q(attempts__user=request.user))).order_by('coins_to_win')
+        # # counter = Attempt.objects.filter(challenge=challenges, user=request.user).count()
+        # attempts_left = int(challenge.number_of_attempts) - counter
+        print(challenges)
+        print(challenges[0].attempted_by_user)
+        challenges_data = []
+        for challenge in challenges:
+            challenge_obj = {
+                "id": challenge.id,
+                "title": challenge.title,
+                "coins_to_win": challenge.coins_to_win,
+                "description": challenge.description,
+                "image": str(challenge.image),
+                "file": str(challenge.file),
+                "attempted_by_user": challenge.attempted_by_user,
+                "attempts_left": int(challenge.number_of_attempts) - challenge.attempted_by_user
+            }
+            challenges_data.append(challenge_obj)
+        # challenges_json = json.dumps(challenges_data)
+        return Response(challenges_data)
+
 class CompletedViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = Attempt.objects.all().filter(confirmed_by_admin=True).order_by('date')
@@ -63,10 +89,11 @@ class AttemptViewSet(viewsets.ModelViewSet):
             print('------')
             print(challenge.number_of_attempts)
             print('------')
-            count = Attempt.objects.filter(challenge=challenge, user=user)
-            counter = len(count)
+            counter = Attempt.objects.filter(challenge=challenge, user=user).count()
+            #counter = len(count)
             print('------')
             print('------')
+            attempts_left = int(challenge.number_of_attempts) - counter
             if counter >= int(challenge.number_of_attempts):
                 return Response({"message": "You reached the limit of attempts"}, status=status.HTTP_400_BAD_REQUEST)
             mail = Mailer()
@@ -87,6 +114,26 @@ class AwardsViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = Awards.objects.all()
     serializer_class = AwardsSerializer
+
+    def list(self, request):
+        awards = Awards.objects.annotate(attempted_by_user=Count('collectedawards', filter=Q(collectedawards__user=request.user))).order_by('price_in_coins')
+        print(awards)
+        print(awards[0].attempted_by_user)
+        awards_data = []
+        for award in awards:
+            awards_obj = {
+                "id": award.id,
+                "title": award.title,
+                "price_in_coins": award.price_in_coins,
+                "description": award.description,
+                "image": str(award.image),
+                "used": award.attempted_by_user,
+                "awards_left": int(award.number_of_uses) - award.attempted_by_user
+            }
+            awards_data.append(awards_obj)
+        # awards_json = json.dumps(awards_data)
+        print(awards_data)
+        return Response(awards_data)
 
 class UsersAwardsViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
@@ -112,17 +159,18 @@ class CollectedAwardsViewSet(viewsets.ModelViewSet):
             print('------')
             print(award.number_of_uses)
             print('------')
-            count = CollectedAwards.objects.filter(awards=awards, user= user)
-            counter = len(count)
+            counter = CollectedAwards.objects.filter(awards=awards, user= user).count()
+            #counter = len(count)
             print('------')
             print('------')
+            awards_left = int(award.number_of_uses) - counter
             if counter >= int(award.number_of_uses):
                 return Response({"message": "You reached the limit of uses"}, status=status.HTTP_400_BAD_REQUEST)
             if profile.collected_coins >= award.price_in_coins:
                 profile.collected_coins = profile.collected_coins - award.price_in_coins
                 profile.save()
                 serializer.save()
-                return Response({"message":"You got the award"}, status=status.HTTP_201_CREATED)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
         print(awards)
         return Response({"message":"You have not enough coins"}, status=status.HTTP_400_BAD_REQUEST)
 

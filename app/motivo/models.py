@@ -81,7 +81,7 @@ class Challenge(models.Model):
 class Attempt(models.Model):
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     description = models.CharField(max_length=100, null=True, blank=True)
-    challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE, default=0)
+    challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE, default=0, related_name='attempts')
     confirmed_by_admin = models.BooleanField(default=False)
     file = models.FileField(upload_to='uploads/attempts/', null=True, blank=True)
     date = models.DateTimeField(default=datetime.now)
