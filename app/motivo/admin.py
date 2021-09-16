@@ -55,7 +55,7 @@ class ProfileAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2'),
+            'fields': ('email', 'password1', 'password2', 'first_name', 'last_name', 'title', 'collected_coins', "collected_coins_gross", "initial_budget_gross"),
         }),
     )
     list_display = ('email', 'first_name', 'last_name', "title", "collected_coins", "collected_coins_gross", "initial_budget_gross", "annual_budget_gross")

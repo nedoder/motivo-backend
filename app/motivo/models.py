@@ -55,17 +55,6 @@ class Profile(AbstractUser):
     def __str__(self):
         return str(self.email)
 
-class Challenge(models.Model):
-    title = models.CharField(max_length=100, default='')
-    coins_to_win = models.IntegerField(default=0)
-    description = models.CharField(max_length=100, null=True, blank=True)
-    file = models.FileField(upload_to='uploads/attempts/', null=True, blank=True)
-    image = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
-
-    def __str__(self):
-        return  str(self.title)
-
-
 ATTEMPT_CHOICES = (
     ("1", "1"),
     ("2", "2"),
@@ -73,6 +62,22 @@ ATTEMPT_CHOICES = (
     ("4", "4"),
     ("5", "5")
 )
+class Challenge(models.Model):
+    title = models.CharField(max_length=100, default='')
+    coins_to_win = models.IntegerField(default=0)
+    description = models.CharField(max_length=100, null=True, blank=True)
+    file = models.FileField(upload_to='uploads/attempts/', null=True, blank=True)
+    image = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
+    number_of_attempts = models.CharField(
+        max_length=20,
+        choices=ATTEMPT_CHOICES,
+        default='1'
+    )
+    def __str__(self):
+        return  str(self.title)
+
+
+
 class Attempt(models.Model):
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     description = models.CharField(max_length=100, null=True, blank=True)
@@ -80,11 +85,6 @@ class Attempt(models.Model):
     confirmed_by_admin = models.BooleanField(default=False)
     file = models.FileField(upload_to='uploads/attempts/', null=True, blank=True)
     date = models.DateTimeField(default=datetime.now)
-    number_of_attempts = models.CharField(
-        max_length=20,
-        choices=ATTEMPT_CHOICES,
-        default='1'
-    )
     tracker = FieldTracker()
 
     def save(self, *args, **kwargs):
