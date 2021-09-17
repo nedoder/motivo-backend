@@ -21,7 +21,9 @@ General information:
 
 ## Technologies Used
 - Django
+- Python
 - Docker
+- Postgres 
 
 ## Features
 
