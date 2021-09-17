@@ -6,10 +6,10 @@ of HR’s processes through gamification.
 
 
 ## Table of Content
- - [General Information](General)
- - [Technologies Used](Technologies)
- - [Features](Features)
- - [Start up](Start)
+ - [General Information](#General)
+ - [Technologies Used](#Technologies-Used)
+ - [Features](#Features)
+ - [Start up](#Start-up)
 
 ## General Information
 Create a custom fully digital onboarding process, which will lead efficiently to meet your business goals. Manage each stage, add tasks, rewards, gamification elements, and tests.
