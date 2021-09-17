@@ -4,7 +4,7 @@ Motivo is an application that helps startups, SMBs
 and enterprises improve by fully digital tools its efficiency
 of HR’s processes through gamification.
 
-
+ 
 ## Table of Content
  - [General Information](#General)
  - [Technologies Used](#Technologies-Used)
