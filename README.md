@@ -34,7 +34,7 @@ General information:
 - Allow employees to exchange coins earned by passing challenges to get awards.
 
 ## Setup
-To run this project, install it locally using:
+To run this project, start it locally using:
 
 `docker-compose up --build`
 
