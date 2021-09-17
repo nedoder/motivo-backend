@@ -42,10 +42,10 @@ class Profile(AbstractUser):
     username = None
     email = models.EmailField(_('email address'), unique=True)
     title = models.CharField(max_length=100)
-    collected_coins_gross = models.IntegerField(default=0)
-    collected_coins = models.IntegerField(default=0)
-    initial_budget_gross = models.IntegerField(default=0)
-    annual_budget_gross = models.IntegerField(default=0)
+    collected_coins_gross = models.PositiveIntegerField(default=0)
+    collected_coins = models.PositiveIntegerField(default=0)
+    initial_budget_gross = models.PositiveIntegerField(verbose_name='Welcome pack budget', default=0)
+    annual_budget_gross = models.PositiveIntegerField(default=0)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -53,7 +53,30 @@ class Profile(AbstractUser):
     objects = ProfileManager()
 
     def __str__(self):
-        return str(self.email)
+        return str(self.first_name) + " " + str(self.last_name)
+
+
+CATEGORY_CHOICES = (
+    ("Sport", "Sport"),
+    ("Lifestyle", "Lifestyle"),
+    ("Work", "Work"),
+    ("Hobbies", "Hobbies"),
+    ("Choice", "Choice")
+)
+class ChallengeCategory(models.Model):
+    name = models.CharField(max_length=100, default='')
+    icon = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
+    category = models.CharField(
+        max_length=20,
+        choices=CATEGORY_CHOICES,
+        default='Sport'
+    )
+
+    class Meta:
+        verbose_name = "Challenge category"
+
+    def __str__(self):
+        return  str(self.name)
 
 ATTEMPT_CHOICES = (
     ("1", "1"),
@@ -64,7 +87,8 @@ ATTEMPT_CHOICES = (
 )
 class Challenge(models.Model):
     title = models.CharField(max_length=100, default='')
-    coins_to_win = models.IntegerField(default=0)
+    coins_to_win = models.PositiveIntegerField(default=0)
+    category = models.ForeignKey(ChallengeCategory, on_delete=models.CASCADE)
     description = models.CharField(max_length=100, null=True, blank=True)
     file = models.FileField(upload_to='uploads/attempts/', null=True, blank=True)
     image = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
@@ -75,8 +99,6 @@ class Challenge(models.Model):
     )
     def __str__(self):
         return  str(self.title)
-
-
 
 class Attempt(models.Model):
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
@@ -105,7 +127,7 @@ class Attempt(models.Model):
         verbose_name_plural = "To be approved"
 
     def __str__(self):
-        return  str(self.description)
+        return  f"Challenge attempted by user {self.user}"
 
 
 USED_CHOICES = (
@@ -118,7 +140,7 @@ USED_CHOICES = (
 class Awards(models.Model):
     title = models.CharField(max_length=100, default='')
     description = models.CharField(max_length=100, null=True, blank=True)
-    price_in_coins = models.IntegerField(default=0)
+    price_in_coins = models.PositiveIntegerField(default=0)
     image = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
     number_of_uses = models.CharField(
         max_length=20,

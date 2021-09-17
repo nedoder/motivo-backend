@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Profile, Challenge, Attempt, Awards, CollectedAwards
+from .models import Profile, Challenge, Attempt, Awards, CollectedAwards, ChallengeCategory
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -29,7 +29,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Challenge
-        fields = ('id', 'title', 'coins_to_win', 'description', 'image', 'file')
+        fields = ('id', 'title', 'coins_to_win', 'description', 'image', 'file', 'category')
 
 class CompletedSerializer(serializers.ModelSerializer):
     challenge = serializers.SerializerMethodField()
@@ -87,7 +87,7 @@ class CollectedAwardsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CollectedAwards
         fields = ('user', 'awards')
-        #depth = 1
+        depth = 1
 
 class UsersCollectedAwardsSerializer(serializers.ModelSerializer):
     class Meta:
