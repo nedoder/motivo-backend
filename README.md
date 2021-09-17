@@ -24,6 +24,7 @@ General information:
 - Python
 - Docker
 - Postgres 
+- JWT
 
 ## Features
 
