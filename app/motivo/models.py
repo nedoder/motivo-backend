@@ -64,16 +64,16 @@ CATEGORY_CHOICES = (
     ("Choice", "Choice")
 )
 class ChallengeCategory(models.Model):
-    name = models.CharField(max_length=100, default='')
-    icon = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
-    category = models.CharField(
+    name = models.CharField(
         max_length=20,
         choices=CATEGORY_CHOICES,
         default='Sport'
     )
+    icon = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
 
     class Meta:
         verbose_name = "Challenge category"
+        verbose_name_plural = "Challenge category"
 
     def __str__(self):
         return  str(self.name)
