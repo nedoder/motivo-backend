@@ -110,7 +110,7 @@ admin.site.unregister(CollectedAwards)
 admin.site.register(CollectedAwards, CollectedAwardsAdmin)
 
 class ChallengeCategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "icon", "category")
+    list_display = ("name", "icon")
 
 admin.site.unregister(ChallengeCategory)
 admin.site.register(ChallengeCategory, ChallengeCategoryAdmin)
