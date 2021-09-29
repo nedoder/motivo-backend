@@ -162,7 +162,7 @@ class CollectedAwardsViewSet(viewsets.ModelViewSet):
             print('------')
             print(award.number_of_uses)
             print('------')
-            counter = CollectedAwards.objects.filter(awards=awards, user= user).count()
+            counter = CollectedAwards.objects.filter(awards=award, user= user).count()
             #counter = len(count)
             print('------')
             print('------')

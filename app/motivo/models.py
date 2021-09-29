@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 from datetime import datetime
 from model_utils import FieldTracker
 from django.contrib.auth.models import AbstractUser, BaseUserManager

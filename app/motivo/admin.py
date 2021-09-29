@@ -5,6 +5,7 @@ from django.utils.translation import gettext, gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User, Group
 from django.contrib.admin.templatetags import admin_modify
+from django.template.defaultfilters import mark_safe
 
 admin.site.register(Profile)
 admin.site.register(Challenge)
@@ -84,7 +85,8 @@ class AttemptAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(AttemptAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['confirmed_by_admin'].widget.attrs['style'] = 'width: 3em; height: 2em;'
+        form.base_fields['confirmed_by_admin'].widget.attrs['style'] = 'filter: hue-rotate(240deg); transform: scale(2); margin:10px;'
+        form.base_fields['confirmed_by_admin'].label = mark_safe('<strong>Confirmed by admin</strong>')
 
         return form
 
