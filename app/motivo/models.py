@@ -56,19 +56,22 @@ class Profile(AbstractUser):
         return str(self.first_name) + " " + str(self.last_name)
 
 
-CATEGORY_CHOICES = (
+class ChallengeCategory(models.Model):
+    CHALLENGE_CATEGORY_CHOICES = (
     ("Sport", "Sport"),
     ("Lifestyle", "Lifestyle"),
     ("Work", "Work"),
     ("Hobbies", "Hobbies"),
     ("Choice", "Choice")
-)
-class ChallengeCategory(models.Model):
-    name = models.CharField(
-        max_length=20,
-        choices=CATEGORY_CHOICES,
-        default='Sport'
     )
+    
+    name = models.CharField(max_length=64)
+    
+    # name = models.CharField(
+    #     max_length=20,
+    #     choices=CHALLENGE_CATEGORY_CHOICES,
+    #     default='Sport'
+    # )
     icon = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
 
     class Meta:

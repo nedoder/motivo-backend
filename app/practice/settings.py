@@ -36,7 +36,6 @@ DEBUG = bool(env("DEBUG"))
 
 ALLOWED_HOSTS = list(str(env("ALLOWED_HOSTS")).split(','))
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -175,7 +174,7 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
-#CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = True
 #
 # # CORS_ORIGIN_WHITELIST = [
 # #     'http://127.0.0.1:8080'

@@ -27,6 +27,15 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'first_name', 'last_name', 'title', 'collected_coins', 'collected_coins_gross', 'initial_budget_gross', 'annual_budget_gross')
 
 class ChallengeSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField('get_challenge_icon')
+    
+    def get_challenge_icon(self, challenge):
+        try:
+            return str(challenge.category.icon)
+        except Exception as e:
+            return ""
+
+    
     class Meta:
         model = Challenge
         fields = ('id', 'title', 'coins_to_win', 'description', 'image', 'file', 'category')

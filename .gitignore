@@ -3,3 +3,4 @@ practice/.env
 myvenv/
 motivo_postgres/
 venv/
+uploads/

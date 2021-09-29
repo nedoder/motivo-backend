@@ -16,7 +16,7 @@ services:
         build:
             dockerfile: ./Dockerfile
             context: .
-        command: bash -c "python manage.py makemigrations; python manage.py migrate; python manage.py collectstatic --noinput ; gunicorn practice.wsgi:application --bind 0.0.0.0:8000 --reload"
+        command: bash -c "python manage.py makemigrations; python manage.py migrate; python manage.py setup_categories; python manage.py collectstatic --noinput ; gunicorn practice.wsgi:application --bind 0.0.0.0:8000 --reload"
         volumes:
             - ./uploads:/code/uploads
             - ./app/practice/static:/static

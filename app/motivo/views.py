@@ -45,11 +45,14 @@ class ChallengeViewSet(viewsets.ModelViewSet):
     serializer_class = ChallengeSerializer
 
     def list(self, request):
-        challenges = Challenge.objects.annotate(attempted_by_user=Count('attempts', filter=Q(attempts__user=request.user))).order_by('coins_to_win')
+        challenges = Challenge.objects.annotate(
+            attempted_by_user=Count('attempts', filter=Q(attempts__user=request.user))) \
+            .order_by('coins_to_win')
+            
         # # counter = Attempt.objects.filter(challenge=challenges, user=request.user).count()
         # attempts_left = int(challenge.number_of_attempts) - counter
-        print(challenges)
-        print(challenges[0].attempted_by_user)
+        # print(challenges)
+        # print(challenges[0].attempted_by_user)
         challenges_data = []
         for challenge in challenges:
             challenge_obj = {
@@ -57,7 +60,7 @@ class ChallengeViewSet(viewsets.ModelViewSet):
                 "title": challenge.title,
                 "coins_to_win": challenge.coins_to_win,
                 "description": challenge.description,
-                "image": str(challenge.image),
+                "image": str(challenge.category.icon),
                 "file": str(challenge.file),
                 "attempted_by_user": challenge.attempted_by_user,
                 "attempts_left": int(challenge.number_of_attempts) - challenge.attempted_by_user
@@ -183,4 +186,5 @@ class DisplayImageView(APIView):
         """
         image_path = f'uploads/images/{imagename}'
         image_data = open(image_path, "rb").read()
+        
         return HttpResponse(image_data, content_type="image/*")
