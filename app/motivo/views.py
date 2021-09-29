@@ -176,6 +176,12 @@ class CollectedAwardsViewSet(viewsets.ModelViewSet):
                 profile.collected_coins = profile.collected_coins - award.price_in_coins
                 profile.save()
                 serializer.save()
+                
+                # Send email notification to inform about the collected award
+                mail = Mailer()
+                mail.send_messages(subject='Motivo award was collected',
+                               context={'customer': self},
+                               to_emails=['finalprojectreactnode@gmail.com'])
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         print(awards)
         return Response({"message":"You have not enough coins"}, status=status.HTTP_400_BAD_REQUEST)

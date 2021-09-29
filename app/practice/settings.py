@@ -46,12 +46,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'rest_framework',
     #'rest_framework.authtoken',
     'corsheaders',
     #'djcelery',
     #'djcelery_email',
-
 ]
 
 MIDDLEWARE = [
@@ -221,5 +221,6 @@ EMAIL_USE_TLS = True # TLS settings
 
 #EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
 
-
 AUTH_USER_MODEL = 'motivo.Profile'
+
+SITE_ID = 1
