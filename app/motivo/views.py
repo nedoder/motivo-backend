@@ -60,14 +60,16 @@ class ChallengeViewSet(viewsets.ModelViewSet):
                 "title": challenge.title,
                 "coins_to_win": challenge.coins_to_win,
                 "description": challenge.description,
-                "image": str(challenge.category.icon),
+                "image": request.build_absolute_uri(str(challenge.category.icon)),
                 "category": challenge.category.name,
                 "file": str(challenge.file),
-                "attempted_by_user": challenge.attempted_by_user,
+                "attempted_by_user": challenge.attempted_by_user,   
                 "attempts_left": int(challenge.number_of_attempts) - challenge.attempted_by_user
             }
             challenges_data.append(challenge_obj)
         # challenges_json = json.dumps(challenges_data)
+        
+        print(request.get_full_path())
         return Response(challenges_data)
 
 class CompletedViewSet(viewsets.ModelViewSet):

@@ -31,7 +31,10 @@ class ChallengeSerializer(serializers.ModelSerializer):
     
     def get_challenge_icon(self, challenge):
         try:
-            return str(challenge.category.icon)
+            request = self.context.get("request")
+            if request:
+                return "https://" + request.get_host() + "/" + str(challenge.category.icon)
+            raise Exception("")
         except Exception as e:
             return ""
 
