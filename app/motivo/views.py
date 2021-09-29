@@ -61,6 +61,7 @@ class ChallengeViewSet(viewsets.ModelViewSet):
                 "coins_to_win": challenge.coins_to_win,
                 "description": challenge.description,
                 "image": str(challenge.category.icon),
+                "category": challenge.category.name,
                 "file": str(challenge.file),
                 "attempted_by_user": challenge.attempted_by_user,
                 "attempts_left": int(challenge.number_of_attempts) - challenge.attempted_by_user
@@ -162,7 +163,7 @@ class CollectedAwardsViewSet(viewsets.ModelViewSet):
             print('------')
             print(award.number_of_uses)
             print('------')
-            counter = CollectedAwards.objects.filter(awards=award, user= user).count()
+            counter = CollectedAwards.objects.filter(awards=awards, user= user).count()
             #counter = len(count)
             print('------')
             print('------')
@@ -179,7 +180,7 @@ class CollectedAwardsViewSet(viewsets.ModelViewSet):
 
 class DisplayImageView(APIView):
     permission_classes = (AllowAny,)
-
+    
     def get(self, request, imagename):
         """
         Endpoint displays particular image.
