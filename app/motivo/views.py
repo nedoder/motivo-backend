@@ -109,8 +109,8 @@ class AttemptViewSet(viewsets.ModelViewSet):
             if counter >= int(challenge.number_of_attempts):
                 return Response({"message": "You reached the limit of attempts"}, status=status.HTTP_400_BAD_REQUEST)
             mail = Mailer()
-            mail.send_messages(subject='Attempting the challenge',
-                               context={'customer': self},
+            mail.send_messages(subject=f'Motivo - {request.user.first_name} {request.user.last_name} attempted the challenge {challenge.title}',
+                               context=f"Hey!\n\n{request.user.first_name} {request.user.last_name} just attempted the challenge {challenge.title}.\nPlease review it in admin panel :)\n\nCheers, Motvo!",
                                to_emails=['finalprojectreactnode@gmail.com'])
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -190,8 +190,8 @@ class CollectedAwardsViewSet(viewsets.ModelViewSet):
                 
                 # Send email notification to inform about the collected award
                 mail = Mailer()
-                mail.send_messages(subject='Motivo award was collected',
-                               context={'customer': self},
+                mail.send_messages(subject='Motivo - award was collected',
+                               context=f"Hey!\n\n{request.user.first_name} {request.user.last_name} wants to collect the award {award.title}.\n\nIncluded note:\n{serializer.data.get('user_note')}.\n\nCheers, Motivo!",
                                to_emails=['finalprojectreactnode@gmail.com'])
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         print(awards)
