@@ -70,6 +70,37 @@ services:
             - traefik.http.routers.${CONTAINER_NAME}-static-websecure.rule=Host(`${STATIC_URL}`)
             - traefik.http.routers.${CONTAINER_NAME}-static-websecure.tls=true
             - traefik.http.routers.${CONTAINER_NAME}-static-websecure.entrypoints=websecure
+    
+    frontend:
+        container_name: ${CONTAINER_NAME}_frontend
+        build:
+            dockerfile: ./Frontend.Dockerfile
+            context: .
+        depends_on:
+            - django
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.${CONTAINER_NAME}-app-web.rule=Host(`${HOST}`)
+            - traefik.http.routers.${CONTAINER_NAME}-app-web.entrypoints=web
+            # https is optional, delete next lines when you don't need this
+            - traefik.http.middlewares.${CONTAINER_NAME}-app-redirect-websecure.redirectscheme.scheme=https
+            - traefik.http.routers.${CONTAINER_NAME}-app-web.middlewares=${CONTAINER_NAME}-app-redirect-websecure
+            - traefik.http.routers.${CONTAINER_NAME}-app-websecure.rule=Host(`${HOST}`)
+            - traefik.http.routers.${CONTAINER_NAME}-app-websecure.tls=true
+            - traefik.http.routers.${CONTAINER_NAME}-app-websecure.entrypoints=websecure
+        networks:
+            - private
+            - traefik_webgateway
+        volumes:
+            - ./frontend/dist/:/usr/share/nginx/html/
+        cap_add:
+            - SYS_PTRACE
+        privileged: true
+        # environment:
+        #     - NGINX_PORT=80
+        #     - WEB_DOCUMENT_ROOT=/app/dist
+        #     - WEB_DOCUMENT_INDEX=index.html
+            # - WEB_ALIAS_DOMAIN=${BACKEND_HOST}
 
 networks:
     traefik_webgateway:

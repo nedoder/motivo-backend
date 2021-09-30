@@ -23,11 +23,17 @@ class UserDataViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = UserDataSerializer
 
-    def get_queryset(self):
-        user = self.request.user
-        if user.is_authenticated:
-            return Profile.objects.filter(id=user.id)
-        raise PermissionDenied()
+    def list(self, request):
+        """Get user data after user is logging in"""
+        user = request.user
+        return Response({
+            "id": user.id,
+            "email": user.email,
+            "title": user.title,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "collected_coins": user.collected_coins,
+        }, status=status.HTTP_200_OK)
 
 class ProfileViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
