@@ -128,10 +128,16 @@ class AwardsViewSet(viewsets.ModelViewSet):
     serializer_class = AwardsSerializer
 
     def list(self, request):
+        """
+        Retrieve list of all the awards.
+        Ordered by price_in_coins.
+        
+        """
+        # Get all the awards
         awards = Awards.objects.annotate(attempted_by_user=Count('collectedawards', filter=Q(collectedawards__user=request.user))).order_by('price_in_coins')
-        print(awards)
-        print(awards[0].attempted_by_user)
         awards_data = []
+        
+        # Fill awards list with proper awards data
         for award in awards:
             awards_obj = {
                 "id": award.id,
@@ -143,8 +149,7 @@ class AwardsViewSet(viewsets.ModelViewSet):
                 "awards_left": int(award.number_of_uses) - award.attempted_by_user
             }
             awards_data.append(awards_obj)
-        # awards_json = json.dumps(awards_data)
-        print(awards_data)
+
         return Response(awards_data)
 
 class UsersAwardsViewSet(viewsets.ModelViewSet):

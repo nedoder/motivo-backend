@@ -37,7 +37,7 @@ class Mailer:
         """
         messages = []
         for recipient in to_emails:
-            message = EmailMessage('New attempt for the challenge challengename', 'User firstnamelastname attempted the challenge challengename. Please verify it llalalalala', to=[recipient], from_email=self.from_email)
+            message = EmailMessage(subject, context, to=[recipient], from_email=self.from_email)
             message.content_subtype = 'html'
             messages.append(message)
 
