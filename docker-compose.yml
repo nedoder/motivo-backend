@@ -20,6 +20,7 @@ services:
         volumes:
             - ./uploads:/code/uploads
             - ./app/practice/static:/static
+            - ./app:/code
         depends_on:
             - db
         expose:
@@ -92,7 +93,7 @@ services:
             - private
             - traefik_webgateway
         volumes:
-            - ./frontend/dist/:/usr/share/nginx/html/
+            - ./frontend/public/:/usr/share/nginx/html/
         cap_add:
             - SYS_PTRACE
         privileged: true

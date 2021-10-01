@@ -26,6 +26,7 @@ class UserDataViewSet(viewsets.ModelViewSet):
     def list(self, request):
         """Get user data after user is logging in"""
         user = request.user
+        
         return Response({
             "id": user.id,
             "email": user.email,
@@ -178,8 +179,7 @@ class CollectedAwardsViewSet(viewsets.ModelViewSet):
             print('------')
             counter = CollectedAwards.objects.filter(awards=awards, user= user).count()
             #counter = len(count)
-            print('------')
-            print('------')
+            
             awards_left = int(award.number_of_uses) - counter
             if counter >= int(award.number_of_uses):
                 return Response({"message": "You reached the limit of uses"}, status=status.HTTP_400_BAD_REQUEST)
