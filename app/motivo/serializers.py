@@ -1,6 +1,10 @@
 from rest_framework import serializers
 from .models import Profile, Challenge, Attempt, Awards, CollectedAwards, ChallengeCategory
 
+class ChallengeCategorySerializer(serializers.Serializer):
+    class Meta:
+        model = ChallengeCategory
+        fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
     # user = serializers.SerializerMethodField()

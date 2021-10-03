@@ -91,7 +91,7 @@ class Challenge(models.Model):
     title = models.CharField(max_length=100, default='')
     coins_to_win = models.PositiveIntegerField(default=0)
     category = models.ForeignKey(ChallengeCategory, on_delete=models.CASCADE)
-    description = models.CharField(max_length=100, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     file = models.FileField(upload_to='uploads/attempts/', null=True, blank=True)
     image = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
     number_of_attempts = models.CharField(

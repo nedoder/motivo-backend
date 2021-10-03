@@ -68,7 +68,13 @@ admin.site.unregister(Profile)
 admin.site.register(Profile, ProfileAdmin)
 
 class ChallengeAdmin(admin.ModelAdmin):
-    list_display = ("title", "coins_to_win", "description", "number_of_attempts", "category")
+    list_display = ("title", "coins_to_win", "description", "number_of_attempts", "category", "file")
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(ChallengeAdmin, self).get_form(request, obj, **kwargs)
+        form.base_fields['file'].label = mark_safe('File (Max-size 3MB)')
+
+        return form
 
 admin.site.unregister(Challenge)
 admin.site.register(Challenge, ChallengeAdmin)

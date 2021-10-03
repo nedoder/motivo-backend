@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer, AttemptSerializer, UserEditSerializer, AwardsSerializer, PostAttemptSerializer, UserDataSerializer, CollectedAwardsSerializer, UsersCollectedAwardsSerializer
-from .models import Profile, Challenge, Attempt, Awards, CollectedAwards
+from .serializers import UserSerializer, ProfileSerializer, ChallengeSerializer, CompletedSerializer, AttemptSerializer, UserEditSerializer, AwardsSerializer, PostAttemptSerializer, UserDataSerializer, CollectedAwardsSerializer, UsersCollectedAwardsSerializer, ChallengeCategorySerializer
+from .models import ChallengeCategory, Profile, Challenge, Attempt, Awards, CollectedAwards
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
@@ -52,14 +52,12 @@ class ChallengeViewSet(viewsets.ModelViewSet):
     serializer_class = ChallengeSerializer
 
     def list(self, request):
+        # Retrieve challenges with amount of attempts taken by the user
         challenges = Challenge.objects.annotate(
             attempted_by_user=Count('attempts', filter=Q(attempts__user=request.user))) \
             .order_by('coins_to_win')
-            
-        # # counter = Attempt.objects.filter(challenge=challenges, user=request.user).count()
-        # attempts_left = int(challenge.number_of_attempts) - counter
-        # print(challenges)
-        # print(challenges[0].attempted_by_user)
+        
+        # Prepare data to be properly formatted to read by frontend
         challenges_data = []
         for challenge in challenges:
             challenge_obj = {
@@ -67,7 +65,7 @@ class ChallengeViewSet(viewsets.ModelViewSet):
                 "title": challenge.title,
                 "coins_to_win": challenge.coins_to_win,
                 "description": challenge.description,
-                "image": request.build_absolute_uri(str(challenge.category.icon)),
+                "image": "https://" + request.get_host() + "/" + str(challenge.category.icon),
                 "category": challenge.category.name,
                 "file": str(challenge.file),
                 "attempted_by_user": challenge.attempted_by_user,   
@@ -196,6 +194,20 @@ class CollectedAwardsViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         print(awards)
         return Response({"message":"You have not enough coins"}, status=status.HTTP_400_BAD_REQUEST)
+
+class ChallengeCategoryViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    queryset = ChallengeCategory.objects.all()
+    serializer_class = ChallengeCategorySerializer
+    
+    def list(self, request):
+        """Retrieve all the categories available in the system"""
+        categories = list(ChallengeCategory.objects.all().order_by('name').values())
+        for category in categories:
+            category['icon'] = "https://" + request.get_host() + "/" + category['icon'],
+        
+        return Response(categories)
+
 
 class DisplayImageView(APIView):
     permission_classes = (AllowAny,)

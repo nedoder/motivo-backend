@@ -6,22 +6,27 @@
    <form>
      <div>
        <h4>Profile</h4>
+       <hr/>
     </div>
   <div class="form-group">
     <label for="exampleFormControlInput1">Name</label>
-    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Name" v-model="editInfo.name">
+    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Name" v-model="editInfo.name" disabled>
   </div>
   <div class="form-group">
     <label for="exampleFormControlInput2">Surname</label>
-    <input type="text" class="form-control" id="exampleFormControlInput2" placeholder="Surname" v-model="editInfo.surname">
+    <input type="text" class="form-control" id="exampleFormControlInput2" placeholder="Surname" v-model="editInfo.surname" disabled>
   </div>
   <div class="form-group">
-    <label for="exampleFormControlInput2">Email</label>
-    <input type="email" class="form-control" id="exampleFormControlInput3" placeholder="Email" v-model="editInfo.email">
+    <label for="exampleFormControlInput3">Email</label>
+    <input type="email" class="form-control" id="exampleFormControlInput3" placeholder="Email" v-model="editInfo.email" disabled>
   </div>
   <div class="form-group">
-    <label for="exampleFormControlInput2">Password</label>
+    <label for="exampleFormControlInput4">Password</label>
     <input type="password" class="form-control" id="exampleFormControlInput4" placeholder="Password" v-model="editInfo.password">
+  </div>
+  <div class="form-group">
+    <label for="exampleFormControlInput5">Repeat password</label>
+    <input type="password" class="form-control" id="exampleFormControlInput5" placeholder="Password" v-model="editInfo.password">
   </div>
   
    <div class="form-group">

@@ -64,7 +64,7 @@
           </CRow>
           <CRow class="m-3">
             <h6>
-              Description: <span>{{ this.awards.description }}</span>
+              Comment: <span>{{ this.awards.description }}</span>
             </h6>
           </CRow>
           <CRow class="m-3">

@@ -7,6 +7,14 @@ import { iconsSet as icons } from './assets/icons/icons.js'
 import store from './store'
 import './plugins'
 import linkify from 'vue-linkify'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faRedo } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import './assets/css/main.css';
+
+library.add(faRedo)
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.config.performance = true
 Vue.use(CoreuiVue)
@@ -20,6 +28,6 @@ new Vue({
     icons,
     template: '<App/>',
     components: {
-        App
+        App,
     }
 })
