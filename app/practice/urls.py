@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('motivo.urls')),
     path('uploads/images/<str:imagename>', DisplayImageView.as_view(), name="display-image"),
+    path('uploads/attempts/<str:imagename>', DisplayImageView.as_view(), name="attempt-image"),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

@@ -52,14 +52,28 @@ class ChallengeViewSet(viewsets.ModelViewSet):
     serializer_class = ChallengeSerializer
 
     def list(self, request):
+        
+        category_filter = self.request.query_params.get('category_id')
+        
         # Retrieve challenges with amount of attempts taken by the user
         challenges = Challenge.objects.annotate(
             attempted_by_user=Count('attempts', filter=Q(attempts__user=request.user))) \
-            .order_by('coins_to_win')
+            .order_by('coins_to_win') \
+            .prefetch_related('category')
         
-        # Prepare data to be properly formatted to read by frontend
-        challenges_data = []
+        # Filter challenges by the chosen category
+        if category_filter and category_filter != "null" and category_filter != "undefined":
+            challenges = challenges.filter(category__id=category_filter)
+        
+        # Divide challenges by active and non active
+        active_challenges = []
+        not_active_challenges = []
+        
         for challenge in challenges:
+            # Check if user attempted a challenge and is waiting for confirmation
+            attempt_to_be_confirmed = Attempt.objects.filter(user=request.user, challenge=challenge, confirmed_by_admin=False).exists()
+            challenge_available_to_attempt = False if attempt_to_be_confirmed else True
+                
             challenge_obj = {
                 "id": challenge.id,
                 "title": challenge.title,
@@ -69,12 +83,22 @@ class ChallengeViewSet(viewsets.ModelViewSet):
                 "category": challenge.category.name,
                 "file": str(challenge.file),
                 "attempted_by_user": challenge.attempted_by_user,   
-                "attempts_left": int(challenge.number_of_attempts) - challenge.attempted_by_user
+                "attempts_left": int(challenge.number_of_attempts) - challenge.attempted_by_user,
+                "challenge_available_to_attempt": challenge_available_to_attempt
             }
-            challenges_data.append(challenge_obj)
+            
+            # Add challenge to proper list
+            active_challenges.append(challenge_obj) if challenge_obj['attempts_left'] > 0 else not_active_challenges.append(challenge_obj)
+        
         # challenges_json = json.dumps(challenges_data)
         
-        print(request.get_full_path())
+        # Sort challenges by coins
+        active_challenges = sorted(active_challenges, key=lambda k: k['challenge_available_to_attempt'], reverse=True)
+        not_active_challenges = sorted(not_active_challenges, key=lambda k: k['coins_to_win'], reverse=True)
+        
+        # Join challenges
+        challenges_data = active_challenges + not_active_challenges
+        
         return Response(challenges_data)
 
 class CompletedViewSet(viewsets.ModelViewSet):

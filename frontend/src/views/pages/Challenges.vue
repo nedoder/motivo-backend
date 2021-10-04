@@ -3,7 +3,10 @@
     <div class="wrapper">
       <CRow alignHorizontal="center">
         <CCol class="col-2 p-3" v-for="(category, index) in categories">
-          <div class="category_card challenge">
+          <div
+            @click="filterByCategory(category.id)"
+            class="category_card challenge"
+          >
             <CRow
               class="m-auto"
               v-bind:style="{
@@ -34,17 +37,20 @@
       <hr :style="[{ width: '85%' }]" />
 
       <CRow alignHorizontal="center" class="mb-3">
-        <div class="row row-cols-3">
+        <div
+          class="row"
+          :class="{
+            'row-cols-3': challenges.length >= 3,
+            'row-cols-2': challenges.length == 2,
+            'row-cols-1': challenges.length == 1,
+          }"
+        >
           <CCol v-for="(challenge, index) in challenges">
             <!-- <Title text="To do" class="font-weight-bold" :number="toDo" activeColor="dark" v-bind:style="{borderRadius: '18px', border: '2px solid #EBEDF0'}"/> -->
-            <div class="col-lg">
+            <div class="col-lg ">
               <div
-                @click="
-                  challenge.attempts_left === 0
-                    ? null
-                    : onChallengeClicked(challenge)
-                "
-                class="challenge_card challenge"
+                @click="onChallengeClicked(challenge)"
+                class="challenge_card challenge mx-auto"
                 :style="[
                   challenge.attempts_left === 0
                     ? { background: 'rgba(153,162,173, 0.2)' }
@@ -105,13 +111,18 @@
                   {{ challenge.description | shortenString(50) }}
                 </div>
 
+                <!-- Active / Inactiva icon to see if the challenge is available to participate -->
                 <CButton
                   class="challenge-icon"
                   v-c-tooltip="{
-                    content: `Active - you can participate in the challenge`,
+                    content: 'Active - you can participate in the challenge',
                     placement: 'bottom',
                   }"
-                  color="success"
+                  :color="
+                    challenge.challenge_available_to_attempt
+                      ? 'success'
+                      : 'danger'
+                  "
                   :disabled="true"
                   :style="[
                     { position: 'absolute' },
@@ -119,7 +130,10 @@
                     { right: '5px' },
                   ]"
                 >
-                  A
+                  <span v-if="challenge.challenge_available_to_attempt">
+                    A
+                  </span>
+                  <span v-else> I </span>
                 </CButton>
               </div>
             </div>
@@ -128,21 +142,27 @@
       </CRow>
     </div>
 
-    <!-- Modal with the challenge details -->
-    <CModal
-      :title="modalTitle"
-      color="info"
-      :centered="true"
-      size="lg"
-      :show.sync="showModal"
-      :name="'Siema!'"
-    >
-      <challenge-details
-        v-if="showModal"
-        @update:show="closeModal"
-        :challenge="selectedChallenge"
-      ></challenge-details>
-    </CModal>
+    <challenge-details
+      v-if="showModal"
+      :challenge="selectedChallenge"
+      :modalTitle="modalTitle"
+      @closed="showModal = false"
+      @submitted="onChallengeSubmitted()"
+    ></challenge-details>
+
+    <!-- Toast message to be displayed -->
+    <CToaster :autohide="3000">
+      <template v-for="toastMessage in toastMessages">
+        <CToast
+          :key="toastMessage.id"
+          :show="true"
+          :header="toastMessage.header"
+          :color="toastMessage.color"
+        >
+          {{ toastMessage.content }}
+        </CToast>
+      </template>
+    </CToaster>
   </div>
 </template>
 
@@ -173,6 +193,9 @@ export default {
       showModal: false,
       modalTitle: "",
       selectedChallenge: null,
+      selectedChallengeCategoryFilter: null,
+
+      toastMessages: [],
     };
   },
   computed: {
@@ -188,57 +211,7 @@ export default {
     },
   },
   mounted() {
-    const token = localStorage.getItem("user-token");
-    const bearer = "Bearer " + token;
-    const challenges = axios({
-      method: "get",
-      url: "https://api.motivo.localhost/challenges/",
-      headers: {
-        Authorization: bearer,
-      },
-    });
-
-    const attempts = axios({
-      method: "get",
-      url: "https://api.motivo.localhost/attempt/",
-      headers: {
-        Authorization: bearer,
-      },
-    });
-
-    const complets = axios({
-      method: "get",
-      url: "https://api.motivo.localhost/completed/",
-      headers: {
-        Authorization: bearer,
-      },
-    });
-
-    const categories = axios({
-      method: "get",
-      url: "https://api.motivo.localhost/categories/",
-      headers: {
-        Authorization: bearer,
-      },
-    });
-
-    Promise.all([challenges, attempts, complets, categories])
-      .then(([chal, att, com, categs]) => {
-        this.attempts = att.data.results;
-        this.failed = att.data.results.length;
-        this.challenges = chal.data;
-
-        console.log("Chal" + chal.data);
-        this.challenges.sort(function (a, b) {
-          return a.attempts_left - b.attempts_left;
-        });
-        this.toDo = chal.data.length;
-        this.complets = com.data.results;
-        this.passed = com.data.results.length;
-
-        this.categories = categs.data;
-      })
-      .catch((error) => console.log(error));
+    this.initializeComponent();
   },
   watch: {
     $route: {
@@ -251,13 +224,120 @@ export default {
     },
   },
   methods: {
+    /**
+     * Retrieve challenges when user picks one category of challenges
+     */
+    filterByCategory(category_id) {
+      this.selectedChallengeCategoryFilter = category_id;
+      this.initializeComponent();
+    },
+
+    /**
+     * Download all the component data regarding challenges
+     */
+    initializeComponent() {
+      const token = localStorage.getItem("user-token");
+      const bearer = "Bearer " + token;
+
+      const challenges = axios({
+        method: "get",
+        url: "https://api.motivo.localhost/challenges/",
+        headers: {
+          Authorization: bearer,
+        },
+        params: this.axiosChallengeCategoryParams,
+      });
+
+      const attempts = axios({
+        method: "get",
+        url: "https://api.motivo.localhost/attempt/",
+        headers: {
+          Authorization: bearer,
+        },
+      });
+
+      const complets = axios({
+        method: "get",
+        url: "https://api.motivo.localhost/completed/",
+        headers: {
+          Authorization: bearer,
+        },
+      });
+
+      const categories = axios({
+        method: "get",
+        url: "https://api.motivo.localhost/categories/",
+        headers: {
+          Authorization: bearer,
+        },
+      });
+
+      Promise.all([challenges, attempts, complets, categories])
+        .then(([chal, att, com, categs]) => {
+          this.attempts = att.data.results;
+          this.failed = att.data.results.length;
+          this.challenges = chal.data;
+
+          console.log(this.challenges);
+
+          // console.log("Chal" + chal.data);
+          // this.challenges.sort(function (a, b) {
+          //   return a.attempts_left - b.attempts_left;
+          // });
+          this.toDo = chal.data.length;
+          this.complets = com.data.results;
+          this.passed = com.data.results.length;
+
+          this.categories = categs.data;
+        })
+        .catch((error) => console.log(error));
+    },
+
+    /**
+     * Run when user submits the challenge successfully and the modal is closed
+     */
+    onChallengeSubmitted() {
+      this.closeModal();
+      this.addToastMessage(
+        "Challenge taken",
+        "Thanks for taking the challenge! Now let's wait for the approval from the admin :)\nMaybe another challenge now?",
+        "success"
+      );
+
+      // Download challenge data again
+      this.initializeComponent();
+    },
+    /**
+     * Adds a new toast message to the array when event occurred
+     */
+    addToastMessage(header, content, color) {
+      var id = this.toastMessages.length;
+      this.toastMessages.push({
+        id: id,
+        header: header,
+        content: content,
+        color: color,
+      });
+    },
+
+    /**
+     * When challenge is clicked display modal with details - only if challenge is available
+     */
     onChallengeClicked(challenge) {
-      // this.$router.push({
-      //   path: `/dashboard/challenges/${challenge.id}`,
-      // });
-      this.selectedChallenge = challenge;
-      this.modalTitle = challenge.title;
-      this.showModal = true;
+      if (
+        challenge.attempts_left > 0 &&
+        challenge.challenge_available_to_attempt
+      ) {
+        this.selectedChallenge = challenge;
+        this.modalTitle = challenge.title;
+        this.showModal = true;
+      } else {
+        this.addToastMessage(
+          "Challenge unavailable",
+          "You can not participate in this challenge at the moment. The challenge is not active.",
+          "danger"
+        );
+      }
     },
     completedClicked(completed) {
       this.$router.push({
@@ -282,6 +362,11 @@ export default {
       return Math.round(
         (this.toDo / (this.failed + this.toDo + this.passed)) * 100
       );
+    },
+    axiosChallengeCategoryParams() {
+      const params = new URLSearchParams();
+      params.append("category_id", this.selectedChallengeCategoryFilter);
+      return params;
     },
   },
 
@@ -317,6 +402,7 @@ h1 {
   padding: 15px;
   margin-top: 25px;
   height: 250px;
+  min-width: 25vw;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
