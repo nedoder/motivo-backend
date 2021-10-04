@@ -33,7 +33,7 @@
 
       <hr :style="[{ width: '85%' }]" />
 
-      <CRow alignHorizontal="center">
+      <CRow alignHorizontal="center" class="mb-3">
         <div class="row row-cols-3">
           <CCol v-for="(challenge, index) in challenges">
             <!-- <Title text="To do" class="font-weight-bold" :number="toDo" activeColor="dark" v-bind:style="{borderRadius: '18px', border: '2px solid #EBEDF0'}"/> -->
