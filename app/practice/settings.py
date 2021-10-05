@@ -24,7 +24,6 @@ environ.Env.read_env()
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -36,6 +35,8 @@ DEBUG = bool(env("DEBUG"))
 
 ALLOWED_HOSTS = list(str(env("ALLOWED_HOSTS")).split(','))
 
+UPLOAD_FILE_MAX_SIZE_MB = 3
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -45,13 +46,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
     'corsheaders',
     'rest_framework',
-    #'rest_framework.authtoken',
     'motivo',
-    #'djcelery',
-    #'djcelery_email',
 ]
 
 MIDDLEWARE = [
@@ -174,7 +171,7 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
-# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = False
 #
 CORS_ORIGIN_WHITELIST = [
     'http://127.0.0.1:8080',

@@ -3,6 +3,7 @@ from datetime import datetime
 from model_utils import FieldTracker
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import ugettext_lazy as _
+from .validators import validate_file_size
 
 class ProfileManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
@@ -92,8 +93,8 @@ class Challenge(models.Model):
     coins_to_win = models.PositiveIntegerField(default=0)
     category = models.ForeignKey(ChallengeCategory, on_delete=models.CASCADE)
     description = models.TextField(null=True, blank=True)
-    file = models.FileField(upload_to='uploads/attempts/', null=True, blank=True)
-    image = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
+    file = models.FileField(upload_to='uploads/challenge_files/', null=True, blank=True, validators=[validate_file_size])
+    # image = models.ImageField(upload_to='uploads/images/', null=True, blank=True)
     number_of_attempts = models.CharField(
         max_length=20,
         choices=ATTEMPT_CHOICES,
@@ -159,7 +160,7 @@ class Awards(models.Model):
 class CollectedAwards(models.Model):
     awards = models.ForeignKey(Awards, on_delete=models.CASCADE, blank=True, null=True)
     user = models.ForeignKey(Profile, on_delete=models.CASCADE, blank=True, null=True)
-    user_note = models.CharField(max_length=100, default='')
+    user_note = models.CharField(max_length=100, default='', blank=True, null=True)
 
     def __str__(self):
         return str(self.awards)

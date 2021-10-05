@@ -75,6 +75,13 @@
           v-on:change="handleFileUpload()"
         />
       </CRow>
+
+      <!-- Button to download the challenge attachment -->
+      <CRow v-if="challenge.file" class="mt-5">
+        <CLink :href="'https://api.motivo.localhost/' + challenge.file" target="_blank">
+          Challenge instructions file
+        </CLink>
+      </CRow>
     </div>
     <!-- Overwritten footer style -->
     <template #footer>
@@ -151,7 +158,7 @@ export default {
       formData.append("file", this.file);
       formData.append("user", localStorage.getItem("user-id"));
       formData.append("challenge", this.challenge.id);
-      formData.append("description", this.challenge.description);
+      formData.append("description", this.description);
 
       axios({
         method: "post",
@@ -164,7 +171,7 @@ export default {
       })
         .then((response) => {
           console.log(response);
-          this.closeModal('submit');
+          this.closeModal("submit");
         })
         .catch((error) => {
           this.addToastMessage(

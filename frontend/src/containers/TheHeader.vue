@@ -69,7 +69,7 @@
             v-bind:style="{ color: '#F2C94C', fontWeight: 'bold' }"
           >
             <img class="text-info p-2" src="./Coin.png" />
-            <template v-if="coins[0].collected_coins">{{ this.coins[0].collected_coins }}</template>
+            <template v-if="coins"> {{ coins }} </template>
           </CHeaderNavItem>
 
           <CHeaderNavItem
@@ -131,16 +131,20 @@ export default {
         },
       })
         .then((resp) => {
-          this.coins = resp.data.results;
+          var results = resp.data.results;
           let userid = parseInt(localStorage.getItem("user-id"));
-          this.coins = this.coins.filter((result) => result.id === userid);
+          results.forEach((result) => {
+            if (result.id === userid) {
+              this.coins = result.collected_coins;
+            }
+          });
         })
         .catch((error) => console.log(error));
     },
   },
 
   /**
-   * 
+   *
    */
   mounted() {
     const token = localStorage.getItem("user-token");
@@ -155,9 +159,14 @@ export default {
     })
       .then((resp) => {
         console.log(resp);
-        this.coins = resp.data.results;
-        let userid = parseInt(localStorage.getItem("user-id")); 
-        this.coins = this.coins.filter((result) => result.id === userid);
+        var results = resp.data.results;
+        let userid = parseInt(localStorage.getItem("user-id"));
+        results.forEach((result) => {
+          if (result.id === userid) {
+            this.coins = result.collected_coins;
+          }
+        });
+
         console.log("Coins: ", this.coins);
       })
       .catch((error) => console.log(error));

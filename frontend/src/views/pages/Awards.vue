@@ -170,9 +170,9 @@ export default {
       })
         .then((resp) => {
           this.awards = resp.data;
-          this.awards.sort(function (a, b) {
-            return a.awards_left - b.awards_left;
-          });
+          // this.awards.sort(function (a, b) {
+          //   return a.awards_left - b.awards_left;
+          // });
           // this.title = resp.data.results[0].title
           // this.price = resp.data.results[0.].price
           // this.image = resp.data.results[0].image

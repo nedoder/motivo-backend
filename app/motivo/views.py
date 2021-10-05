@@ -9,8 +9,8 @@ from django.http import HttpResponse
 from .tasks import Mailer
 from django.db.models import Q, Count
 import json
-from django.http import JsonResponse
 from django.core import serializers
+from django.http import FileResponse, JsonResponse
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -172,6 +172,9 @@ class AwardsViewSet(viewsets.ModelViewSet):
                 "awards_left": int(award.number_of_uses) - award.attempted_by_user
             }
             awards_data.append(awards_obj)
+            
+        # Sort awards - put the ones not available at the end
+        awards_data = sorted(awards_data, key=lambda x: x['awards_left'], reverse=True)
 
         return Response(awards_data)
 
@@ -216,7 +219,9 @@ class CollectedAwardsViewSet(viewsets.ModelViewSet):
                                context=f"Hey!\n\n{request.user.first_name} {request.user.last_name} wants to collect the award {award.title}.\n\nIncluded note:\n{serializer.data.get('user_note')}.\n\nCheers, Motivo!",
                                to_emails=['finalprojectreactnode@gmail.com'])
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-        print(awards)
+        else:
+            print(serializer.errors)
+            
         return Response({"message":"You have not enough coins"}, status=status.HTTP_400_BAD_REQUEST)
 
 class ChallengeCategoryViewSet(viewsets.ModelViewSet):
@@ -240,7 +245,24 @@ class DisplayImageView(APIView):
         """
         Endpoint displays particular image.
         """
-        image_path = f'uploads/images/{imagename}'
-        image_data = open(image_path, "rb").read()
+        try:
+            image_path = f'uploads/images/{imagename}'
+            image_data = open(image_path, "rb").read()
+        except Exception as e:
+            print(f"There's no image in images/ --> {e}")
+        
+        try:
+            image_path = f'uploads/attempts/{imagename}'
+            image_data = open(image_path, "rb").read()
+        except Exception as e:
+            print(f"There's no image in attempts/ --> {e}'")
         
         return HttpResponse(image_data, content_type="image/*")
+    
+class DownloadFileView(APIView):
+    permission_classes = (AllowAny,)
+    
+    def get(self, request, filename):
+        # Get full path to file and open it
+        full_path = request.get_full_path()[1:]
+        return FileResponse(open(full_path, 'rb'), content_type='application/pdf')

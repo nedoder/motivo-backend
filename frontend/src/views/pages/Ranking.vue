@@ -1,6 +1,8 @@
 <template>
   <CRow>
     <CCol col="12" xl="12" sm="12">
+      
+      <!-- Top data elipse -->
       <CRow
         v-bind:style="{
           borderRadius: '18px',
@@ -46,6 +48,8 @@
         <!-- </CCardBody>
         </CCol> -->
       </CRow>
+
+      <!-- First 3 users table -->
       <CDataTable
         v-bind:style="{
           borderRadius: '18px',
@@ -53,7 +57,6 @@
           padding: '10px',
           margin: '10px',
         }"
-        hover
         :items="collectedFilteredItems"
         :fields="fields"
         :items-per-page="20"
@@ -63,7 +66,9 @@
         @page-change="pageChange"
       >
       </CDataTable>
-      <CDataTable
+
+      <!-- Places from 4th further on... -->
+      <!-- <CDataTable
         v-bind:style="{
           borderRadius: '18px',
           border: '2px solid #EBEDF0',
@@ -79,7 +84,7 @@
         :pagination="{ doubleArrows: false, align: 'center' }"
         @page-change="pageChange"
       >
-      </CDataTable>
+      </CDataTable> -->
     </CCol>
   </CRow>
 </template>
@@ -95,7 +100,7 @@ export default {
       fields: [
         {
           key: "count",
-          label: "Count",
+          label: "Position",
           _classes: "font-weight-bold",
         },
 
@@ -144,7 +149,7 @@ export default {
     },
     collectedFilteredItems2() {
       return this.computedItems.sort(function (a, b) {
-        return b.collected_coins_gross - a.collected_coins_gross;
+        return b.collected_coins_gross;
       });
     },
     userItems() {
@@ -210,5 +215,17 @@ export default {
 
 td {
   border: none !important;
+}
+
+tbody > tr:nth-child(1) {
+  background-color: rgba(255, 217, 0, 0.673);
+}
+
+tbody > tr:nth-child(2) {
+  background-color: rgba(192, 192, 192, 0.673);
+}
+
+tbody > tr:nth-child(3) {
+  background-color: rgba(176, 60, 60, 0.673);
 }
 </style>

@@ -6,6 +6,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User, Group
 from django.contrib.admin.templatetags import admin_modify
 from django.template.defaultfilters import mark_safe
+from practice.settings import UPLOAD_FILE_MAX_SIZE_MB
 
 admin.site.register(Profile)
 admin.site.register(Challenge)
@@ -72,7 +73,7 @@ class ChallengeAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(ChallengeAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['file'].label = mark_safe('File (Max-size 3MB)')
+        form.base_fields['file'].label = mark_safe(f'File (Max-size {str(UPLOAD_FILE_MAX_SIZE_MB)}MB)')
 
         return form
 
