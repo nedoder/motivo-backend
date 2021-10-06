@@ -13,9 +13,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import environ
 
-import os
-import environ
-
 env = environ.Env()
 # reading .env file
 environ.Env.read_env()
@@ -48,7 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'motivo',
+    'apps.motivo',
+    'apps.challenges',
+    'apps.awards'
 ]
 
 MIDDLEWARE = [
@@ -171,13 +170,13 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True
 #
-CORS_ORIGIN_WHITELIST = [
-    'http://127.0.0.1:8080',
-    'http://localhost:8080',
-    'https://motivo.localhost'
-]
+# CORS_ORIGIN_WHITELIST = [
+#     'http://127.0.0.1:8080',
+#     'http://localhost:8080',
+#     'https://motivo.localhost'
+# ]
 
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 

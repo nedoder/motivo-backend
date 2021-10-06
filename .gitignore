@@ -4,3 +4,5 @@ myvenv/
 motivo_postgres/
 venv/
 uploads/
+frontend/public/*
+app/motivo/*

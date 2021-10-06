@@ -47,10 +47,11 @@
         >
           <CCol v-for="(challenge, index) in challenges">
             <!-- <Title text="To do" class="font-weight-bold" :number="toDo" activeColor="dark" v-bind:style="{borderRadius: '18px', border: '2px solid #EBEDF0'}"/> -->
-            <div class="col-lg ">
+            <div class="col-lg">
               <div
                 @click="onChallengeClicked(challenge)"
                 class="challenge_card challenge mx-auto"
+                :class="{ challenge_inactive: challenge.attempts_left == 0 }"
                 :style="[
                   challenge.attempts_left === 0
                     ? { background: 'rgba(153,162,173, 0.2)' }
@@ -181,6 +182,8 @@ export default {
   },
   data() {
     return {
+      api_url: process.env.API_URL,
+
       challenges: [],
       attempts: [],
       complets: [],
@@ -212,6 +215,7 @@ export default {
   },
   mounted() {
     this.initializeComponent();
+    console.log(process.env);
   },
   watch: {
     $route: {
@@ -396,15 +400,22 @@ h1 {
 }
 
 .challenge_card {
-  border: 2px solid #ebedf0;
-  box-shadow: 0px 2px 0px #cfd8da;
+  border: 1px solid #ebedf0;
+  -webkit-box-shadow: 0px 2px 0px #cfd8da;
+  box-shadow: -3px 5px 5px rgb(212 245 255);
   border-radius: 18px;
   padding: 15px;
   margin-top: 25px;
   height: 250px;
   min-width: 25vw;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -ms-flex-pack: distribute;
   justify-content: space-around;
   position: relative;
 }
@@ -418,11 +429,20 @@ h1 {
   flex-direction: column;
   justify-content: space-around;
   position: relative;
+  box-shadow: -2px 4px 1px #c3c3c3ad;
 }
 
-.challenge_card:hover,
+.challenge_card:hover {
+  transform: translateY(5px);
+  cursor: pointer;
+  box-shadow: 0px 0px 3px rgb(186 249 255);
+  cursor: pointer;
+}
+
 .category_card:hover {
-  background-color: rgba(153, 162, 173, 0.2) !important;
+  transform: translateY(5px);
+  box-shadow: 0px 0px 3px #c3c3c3ad;
+  /* background-color: rgba(153, 162, 173, 0.2) !important; */
   cursor: pointer;
 }
 
@@ -466,5 +486,17 @@ p:first-child {
 
 .challenge-icon {
   padding: 3px 8px;
+}
+
+.challenge_inactive {
+  /* background-color: ; */
+  box-shadow: -3px 5px 4px rgb(189 189 189 / 87%);
+}
+
+.challenge_inactive:hover {
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: -3px 5px 4px rgb(189 189 189 / 87%);
+
 }
 </style>

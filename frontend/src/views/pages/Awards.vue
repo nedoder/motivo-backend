@@ -250,7 +250,7 @@ export default {
 }
 
 .hover:hover {
-  background-color: rgba(153, 162, 173, 0.1) !important;
+  /* background-color: rgba(153, 162, 173, 0.1) !important; */
   border: none;
 }
 
@@ -259,7 +259,8 @@ export default {
 }
 
 .award_card:hover {
-  background: rgba(153, 162, 173, 0.1) !important;
+  /* background: rgba(153, 162, 173, 0.1) !important; */
+  transform: translateY(5px);
   border-radius: 18px;
   cursor: pointer;
 }
