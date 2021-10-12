@@ -54,25 +54,41 @@ class Challenge(models.Model):
         return  str(self.title)
 
 class Attempt(models.Model):
+    STATUSES = (
+        ('accepted', 'accepted'),
+        ('declined', 'declined'),
+        ('waiting', 'waiting'),
+    )
+    
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     description = models.CharField(max_length=100, null=True, blank=True)
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE, default=0, related_name='attempts')
-    confirmed_by_admin = models.BooleanField(default=False)
+    # confirmed_by_admin = models.BooleanField(default=False)
     file = models.FileField(upload_to='uploads/attempts/', null=True, blank=True)
     date = models.DateTimeField(default=datetime.now)
+    status = models.CharField(max_length=32, choices=STATUSES, default='waiting')
     tracker = FieldTracker()
 
     def save(self, *args, **kwargs):
         profile = self.user
         challenge = self.challenge
-        print('-----------------')
-        print(self.tracker.has_changed('confirmed_by_admin'))
-        print(self.tracker.previous('confirmed_by_admin'))
-        print('-----------------')
-        if self.tracker.has_changed('confirmed_by_admin') and (self.tracker.previous('confirmed_by_admin')) is False:
-            profile.collected_coins += challenge.coins_to_win
-            profile.collected_coins_gross += challenge.coins_to_win
-            profile.save()
+        # if self.tracker.has_changed('confirmed_by_admin') and (self.tracker.previous('confirmed_by_admin')) is False:
+        #     profile.collected_coins += challenge.coins_to_win
+        #     profile.collected_coins_gross += challenge.coins_to_win
+        #     profile.save()
+            
+        if self.tracker.has_changed('status'):
+            if self.status == "accepted":
+                print(self.tracker.previous('status'))
+                profile.collected_coins += challenge.coins_to_win
+                profile.collected_coins_gross += challenge.coins_to_win
+                profile.save()
+            elif self.status == "declined":
+                if self.tracker.previous('status') == "accepted":
+                    profile.collected_coins -= challenge.coins_to_win
+                    profile.collected_coins_gross -= challenge.coins_to_win
+                    profile.save()
+                    
         super().save(*args, **kwargs)
 
     class Meta:

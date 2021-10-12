@@ -1,7 +1,6 @@
 <template>
   <CRow>
     <CCol col="12" xl="12" sm="12">
-      
       <!-- Top data elipse -->
       <CRow
         v-bind:style="{
@@ -20,7 +19,7 @@
         <CCol>
           <p v-bind:style="{ color: '#B8C1CC !important' }">Place:</p>
           <h5 v-bind:style="{ color: '#03001D !important' }">
-            {{ count }}
+            {{ position }}
           </h5>
         </CCol>
         <CCol>
@@ -49,8 +48,8 @@
         </CCol> -->
       </CRow>
 
-      <!-- First 3 users table -->
       <CDataTable
+        id="ranking-table"
         v-bind:style="{
           borderRadius: '18px',
           border: '2px solid #EBEDF0',
@@ -65,41 +64,35 @@
         :pagination="{ doubleArrows: false, align: 'center' }"
         @page-change="pageChange"
       >
-      </CDataTable>
+        
+        <template #position="{ item, index }">
+          <font-awesome-icon v-if="index < 3 && activePage === 1" icon="medal" class="ml-4 mt-2" 
+          v-bind:style="{fontSize: '1.5em'}" 
+          :class="index==0 ? 'golden' : index == 1 ? 'silver' : 'bronze' " />
 
-      <!-- Places from 4th further on... -->
-      <!-- <CDataTable
-        v-bind:style="{
-          borderRadius: '18px',
-          border: '2px solid #EBEDF0',
-          padding: '10px',
-          margin: '10px',
-        }"
-        hover
-        :items="collectedFilteredItems2"
-        :fields="fields"
-        :items-per-page="20"
-        :header="false"
-        :active-page="activePage"
-        :pagination="{ doubleArrows: false, align: 'center' }"
-        @page-change="pageChange"
-      >
-      </CDataTable> -->
+          <template v-if="activePage > 1 || (activePage === 1 && index > 2)">
+            <b class="ml-4" > {{ item.position }} </b>
+          </template>
+        </template>
+
+      </CDataTable>
     </CCol>
   </CRow>
 </template>
 
 <script>
+import { dom } from "@fortawesome/fontawesome-svg-core";
+
 import axios from "axios";
 export default {
   name: "Ranking",
   data() {
     return {
       items: [],
-      count: null,
+      position: null,
       fields: [
         {
-          key: "count",
+          key: "position",
           label: "Position",
           _classes: "font-weight-bold",
         },
@@ -130,14 +123,14 @@ export default {
       let userid = parseInt(localStorage.getItem("user-id"));
       return this.items.map((item, index) => {
         if (item.id === userid) {
-          this.count = index + 1;
+          this.position = index + 1;
         }
         return {
           ...item,
           userUsername: item.first_name + " " + item.last_name,
           userId: item.id,
           title: item.title,
-          count: index + 1,
+          position: index + 1,
           balance: item.collected_coins,
         };
       });
@@ -179,6 +172,22 @@ export default {
     // rowClicked (item, index) {
     //   this.$router.push({path: `users/${index + 1}`})
     // },
+    // setupMedals() {
+    //   var rows = document.getElementsByTagName("table")[0].rows;
+    //   console.log("---");
+    //   console.log(rows[1].cells);
+    //   console.log(rows[1].cells[0]);
+    //   console.log(rows[1].cells[0].innerHTML);
+
+    //   var html_to_insert = '<font-awesome-icon icon="medal" />';
+
+    //   rows[1].cells[0].innerHTML = html_to_insert;
+    //   rows[2].cells[0].innerHTML = html_to_insert;
+    //   rows[3].cells[0].innerHTML = html_to_insert;
+
+    //   console.log(console.log(rows[1].cells[0].innerHTML));
+    //   dom.watch();
+    // },
     pageChange(val) {
       this.$router.push({
         query: {
@@ -205,6 +214,9 @@ export default {
       })
       .catch((error) => console.log(error));
   },
+  updated() {
+    // this.setupMedals();
+  },
 };
 </script>
 
@@ -217,15 +229,16 @@ td {
   border: none !important;
 }
 
-tbody > tr:nth-child(1) {
-  background-color: rgba(255, 217, 0, 0.673);
+.golden {
+  color: gold;
 }
 
-tbody > tr:nth-child(2) {
-  background-color: rgba(192, 192, 192, 0.673);
+.silver {
+  color: silver;
 }
 
-tbody > tr:nth-child(3) {
-  background-color: rgba(176, 60, 60, 0.673);
+.bronze {
+  color: #803232;
 }
+
 </style>

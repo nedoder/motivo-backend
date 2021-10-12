@@ -46,10 +46,10 @@ class AttemptSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attempt
-        fields = ('user', 'challenge', 'file', 'description', 'confirmed_by_admin' )
+        fields = ('user', 'challenge', 'file', 'description', 'status' )
         # depth = 1
 
 class PostAttemptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attempt
-        fields = ('user', 'challenge', 'description', 'file', 'confirmed_by_admin')
+        fields = ('user', 'challenge', 'description', 'file', 'status')

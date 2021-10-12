@@ -16,7 +16,7 @@ services:
         build:
             dockerfile: ./Dockerfile
             context: .
-        command: bash -c "python manage.py makemigrations; python manage.py migrate; python manage.py setup_categories; python manage.py collectstatic --noinput ; gunicorn practice.wsgi:application --bind 0.0.0.0:8000 --reload"
+        command: bash -c "python manage.py makemigrations; python manage.py migrate; python manage.py setup_categories; python manage.py setup_groups; python manage.py collectstatic --noinput ; gunicorn practice.wsgi:application --bind 0.0.0.0:8000 --reload"
         volumes:
             - ./uploads:/code/uploads
             - ./app/practice/static:/static
@@ -102,6 +102,47 @@ services:
         #     - WEB_DOCUMENT_ROOT=/app/dist
         #     - WEB_DOCUMENT_INDEX=index.html
             # - WEB_ALIAS_DOMAIN=${BACKEND_HOST}
+
+    rabbitmq:
+        image: rabbitmq:management-alpine
+        hostname: rabbitmq
+        restart: on-failure
+        networks:
+            - private
+    
+    celery_worker:
+        build:
+            dockerfile: ./Dockerfile
+            context: .
+        command: celery -A practice worker -l info --max-tasks-per-child=1
+        environment:
+            - DJANGO_SETTINGS_MODULE=practice.settings
+        # volumes:
+            # - .:/code
+        restart: on-failure
+        depends_on:
+            - django
+            - db
+            - rabbitmq
+        networks:
+            - private
+
+    celery_beat:
+        build:
+            dockerfile: ./Dockerfile
+            context: .
+        command: celery -A practice beat -l info
+        environment:
+            - DJANGO_SETTINGS_MODULE=practice.settings
+        # volumes:
+            # - .:/code
+        depends_on:
+            - django
+            - db
+            - rabbitmq
+        restart: on-failure
+        networks:
+            - private
 
 networks:
     traefik_webgateway:

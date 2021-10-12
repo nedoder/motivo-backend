@@ -3,6 +3,7 @@ from datetime import datetime
 from model_utils import FieldTracker
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import ugettext_lazy as _
+import datetime
 
 class ProfileManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
@@ -45,6 +46,7 @@ class Profile(AbstractUser):
     collected_coins = models.PositiveIntegerField(default=0)
     initial_budget_gross = models.PositiveIntegerField(verbose_name='Welcome pack budget', default=0)
     annual_budget_gross = models.PositiveIntegerField(default=0)
+    budget_left_gross = models.PositiveIntegerField(default=0)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -52,4 +54,20 @@ class Profile(AbstractUser):
     objects = ProfileManager()
 
     def __str__(self):
-        return str(self.first_name) + " " + str(self.last_name)
+        return f"{self.first_name} {self.last_name} ({self.email})"
+    
+    def save(self, *args, **kwargs):
+        # If user is being created count the daily budget based on days left until the end of the year
+        if self._state.adding:
+            today = datetime.date.today()
+            daily_budget = self.annual_budget_gross / 365
+            days_until_end_of_the_year = (datetime.date(today.year, 12, 31) - today).days
+            self.annual_budget_gross = daily_budget * days_until_end_of_the_year
+            self.budget_left_gross = self.annual_budget_gross
+        
+        super(Profile, self).save(*args, **kwargs)
+        
+    def reset_annual_budget(self):
+        """Reset annual budget that is left to initial value of annual budget"""
+        self.budget_left_gross = self.annual_budget_gross
+        self.save()

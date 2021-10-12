@@ -25,7 +25,7 @@ admin.site.unregister(Challenge)
 admin.site.register(Challenge, ChallengeAdmin)
 
 class AttemptAdmin(admin.ModelAdmin):
-    list_display = ("user", "description", "challenge", "confirmed_by_admin")
+    list_display = ("user", "description", "challenge", "status")
 
 
     def get_readonly_fields(self, request, obj=None):
@@ -36,8 +36,8 @@ class AttemptAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(AttemptAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['confirmed_by_admin'].widget.attrs['style'] = 'filter: hue-rotate(240deg); transform: scale(2); margin:10px;'
-        form.base_fields['confirmed_by_admin'].label = mark_safe('<strong>Confirmed by admin</strong>')
+        # form.base_fields['confirmed_by_admin'].widget.attrs['style'] = 'filter: hue-rotate(240deg); transform: scale(2); margin:10px;'
+        # form.base_fields['confirmed_by_admin'].label = mark_safe('<strong>Confirmed by admin</strong>')
 
         return form
 

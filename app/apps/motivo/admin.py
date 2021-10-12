@@ -33,10 +33,15 @@ class ProfileAdmin(UserAdmin):
             'fields': ('email', 'password1', 'password2', 'first_name', 'last_name', 'title', "initial_budget_gross", "annual_budget_gross"),
         }),
     )
-    list_display = ('email', 'first_name', 'last_name', "title", "collected_coins", "collected_coins_gross", "initial_budget_gross", "annual_budget_gross")
+    list_display = ('email', 'first_name', 'last_name', "title", "collected_coins", "collected_coins_gross", "initial_budget_gross", "annual_budget_gross", "budget_left_gross")
     #search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
 
 admin.site.unregister(Profile)
 admin.site.register(Profile, ProfileAdmin)
 
+class GroupAdmin(admin.ModelAdmin):
+    pass
+
+# admin.site.unregister(Group)
+admin.site.register(Group, GroupAdmin)

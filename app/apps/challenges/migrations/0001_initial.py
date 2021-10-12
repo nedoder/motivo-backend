@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('description', models.CharField(blank=True, max_length=100, null=True)),
-                ('confirmed_by_admin', models.BooleanField(default=False)),
+                # ('confirmed_by_admin', models.BooleanField(default=False)),
                 ('file', models.FileField(blank=True, null=True, upload_to='uploads/attempts/')),
                 ('date', models.DateTimeField(default=datetime.datetime.now)),
                 ('challenge', models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, related_name='attempts', to='challenges.challenge')),

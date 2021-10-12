@@ -25,21 +25,6 @@ const CustomLogIn = () =>
 const ChangePassword = () =>
     import ('@/views/pages/ChangePassword')
 
-const Onboarding1 = () =>
-    import ('@/views/pages/Onboarding1')
-
-const Onboarding2 = () =>
-    import ('@/views/pages/Onboarding2')
-
-const Onboarding3 = () =>
-    import ('@/views/pages/Onboarding3')
-
-const Onboarding4 = () =>
-    import ('@/views/pages/Onboarding4')
-
-const Onboarding5 = () =>
-    import ('@/views/pages/Onboarding5')
-
 const Edit = () =>
     import ('@/views/pages/Edit')
 
@@ -78,6 +63,9 @@ const Register = () =>
 
 const Challenges = () =>
     import ('@/views/pages/Challenges')
+
+const Budget = () =>
+    import ('@/views/pages/Budget')
 
 const Challenge = () =>
     import ('@/views/pages/Challenge')
@@ -188,41 +176,10 @@ function configRoutes() {
             component: Edit,
         },
         {
-            path: '/onboarding1',
-            //redirect: '/dashboard',
-            name: 'Onboarding1',
-            component: Onboarding1,
-        },
-        {
             path: '/changepassword',
             //redirect: '/dashboard',
             name: 'ChangePassword',
             component: ChangePassword,
-        },
-        {
-            path: '/onboarding2',
-            //redirect: '/dashboard',
-            name: 'Onboarding2',
-            component: Onboarding2,
-        },
-        {
-            path: '/onboarding3',
-            //redirect: '/dashboard',
-            name: 'Onboarding3',
-            component: Onboarding3,
-        },
-        {
-            path: '/onboarding4',
-            //redirect: '/dashboard',
-            name: 'Onboarding4',
-            component: Onboarding4,
-        },
-        {
-            path: '/onboarding5',
-            //redirect: '/dashboard',
-            name: 'Onboarding5',
-            component: Onboarding5,
-
         },
         {
             path: '/profile',
@@ -405,7 +362,22 @@ function configRoutes() {
                     ]
                 },
 
-
+                {
+                    path: 'budget',
+                    meta: {
+                        label: 'budget'
+                    },
+                    component: {
+                        render(c) {
+                            return c('router-view')
+                        }
+                    },
+                    children: [{
+                        path: '',
+                        name: 'Budget',
+                        component: Budget
+                    }]
+                },
 
                 {
                     path: 'buttons',

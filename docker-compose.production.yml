@@ -73,6 +73,51 @@ services:
             - VIRTUAL_HOST=${HOST}
             - LETSENCRYPT_HOST=${HOST}
             - LETSENCRYPT_EMAIL=${USER_LETSENCRYPT_EMAIL}
+
+    rabbitmq:
+        image: rabbitmq:management-alpine
+        hostname: rabbitmq
+        restart: on-failure
+        networks:
+            - private
+    
+    celery_worker:
+        build:
+            dockerfile: ./Dockerfile
+            context: .
+        command: celery -A practice worker -l info --max-tasks-per-child=1
+        environment:
+            - DJANGO_SETTINGS_MODULE=practice.settings
+        # volumes:
+            # - .:/code
+        restart: on-failure
+        depends_on:
+            - django
+            - db
+            - rabbitmq
+        networks:
+            - private
+
+    celery_beat:
+        build:
+            dockerfile: ./Dockerfile
+            context: .
+        command: celery -A practice beat -l info
+        environment:
+            - DJANGO_SETTINGS_MODULE=practice.settings
+        # volumes:
+            # - .:/code
+        depends_on:
+            - django
+            - db
+            - rabbitmq
+        restart: on-failure
+        networks:
+            - private
+
+
+
+
             
 networks:
     traefik_webgateway:

@@ -3,6 +3,7 @@
     class="d-flex justify-content-center"
     v-bind:style="{ borderBottom: '2px solid #EBEDF0' }"
   >
+
     <CNavbar expandable="md" type="light" color="light" class="bg-white m-auto">
       <CToggler
         in-navbar
@@ -34,6 +35,7 @@
               <img src="./Tasks (1).png" /> Challenges
             </CHeaderNavLink>
           </CHeaderNavItem>
+
           <CHeaderNavItem class="px-5" v-bind:style="{ listStyleType: 'none' }">
             <CHeaderNavLink
               class="text-info"
@@ -46,6 +48,7 @@
               <img src="./Ranking.png" /> Ranking
             </CHeaderNavLink>
           </CHeaderNavItem>
+
           <CHeaderNavItem class="px-5" v-bind:style="{ listStyleType: 'none' }">
             <CHeaderNavLink
               class="text-info"
@@ -56,6 +59,19 @@
               }"
             >
               <img src="./Coupon.png" /> Awards
+            </CHeaderNavLink>
+          </CHeaderNavItem>
+
+          <CHeaderNavItem class="px-5" v-bind:style="{ listStyleType: 'none' }">
+            <CHeaderNavLink
+              class="text-info"
+              to="/dashboard/budget"
+              v-bind:style="{
+                textDecoration: 'none',
+                color: '#99A2AD  !important',
+              }"
+            >
+              <img src="./Cash.png" /> Budget
             </CHeaderNavLink>
           </CHeaderNavItem>
         </CNavbarNav>
@@ -95,6 +111,7 @@
         </CNavbarNav>
       </CCollapse>
     </CNavbar>
+
   </div>
 </template>
 

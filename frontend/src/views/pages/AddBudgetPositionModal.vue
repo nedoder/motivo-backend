@@ -1,72 +1,74 @@
 <template>
   <!-- Modal with the challenge details -->
   <CModal
-    :title="modalTitle"
+    title="Add new budget position"
     color="info"
     :centered="true"
     size="lg"
     :show.sync="showModal"
   >
+    <template #header> <h5 class="pt-1">Add new budget position</h5> </template>
 
-  <template #header> <h5 class="pt-1"> {{modalTitle}} </h5> </template>
-
-    <div class="p-4">
-      <!-- Coins image -->
+    <div class="p-3">
+      <!-- Title input -->
       <CRow class="my-1">
-        <p class="coin_text">
-          {{ challenge.coins_to_win }} &nbsp;
-          <img class="text-info" src="./img/Coin.png" />
-        </p>
+        <CInput
+          v-model="formData.title"
+          type="text"
+          class="w-100"
+          placeholder="Insert the title"
+          label="Title"
+        ></CInput>
       </CRow>
 
-      <!-- Challenge image -->
-      <CRow
-        class="m-auto"
-        v-bind:style="{
-          display: 'flex',
-          position: 'relative',
-          width: '120px',
-          height: '135px',
-          clipPath:
-            'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
-        }"
-      >
-        <img
-          v-bind:src="challenge.image"
-          alt="Award image"
-          v-bind:style="{
-            width: '100%',
-            height: 'auto',
-            display: 'block',
-            objectFit: 'cover',
-          }"
+      <!-- Category select -->
+      <CRow class="my-1">
+        <CSelect
+          label="Select Category"
+          class="w-100"
+          :options="selectCategoryOptions"
+          :value.sync="formData.category"
+          placeholder="Select category"
         />
       </CRow>
 
-      <!-- Challenge title -->
+      <!-- When -->
       <CRow class="my-1">
-        <h2>{{ challenge.title | capitalize }}</h2>
+        <CInput
+          type="date"
+          class="w-100"
+          label="When"
+          v-model="formData.when"
+        ></CInput>
       </CRow>
 
-      <!-- Challenge description -->
-      <CRow class="my-1">
-        <p class="px-3" v-linkified :style="[{ textAlign: 'justify' }]">
-          {{ challenge.description }}
-        </p>
+      <!-- Amount in PLN -->
+      <CRow class="mt-3 mb-1">
+        <CInput
+          v-model="formData.amount"
+          class="w-100"
+          label="Amount (PLN)"
+          type="number"
+          min="0"
+          placeholder="0 PLN"
+          :value="0"
+        >
+        </CInput>
       </CRow>
 
-      <!-- Challenge comment -->
+      <!-- Comment -->
       <CRow class="my-1">
         <CTextarea
-          label="Your comment"
+          v-model="formData.comment"
           class="w-100"
-          v-model="description"
-          placeholder="Tell us how did you complete the challenge :)"
-          required
-        />
+          label="Comment"
+          type="number"
+          placeholder="Put your comment here"
+        >
+        </CTextarea>
       </CRow>
 
-      <!-- File to be attached by the user -->
+      <!-- File to be uploaded -->
       <CRow class="my-1">
         <p>Attach file</p>
       </CRow>
@@ -78,19 +80,13 @@
           v-on:change="handleFileUpload()"
         />
       </CRow>
-
-      <!-- Button to download the challenge attachment -->
-      <CRow v-if="challenge.file" class="mt-5">
-        <CLink :href="'https://api.motivo.localhost/' + challenge.file" target="_blank">
-          Challenge instructions file
-        </CLink>
-      </CRow>
     </div>
+
     <!-- Overwritten footer style -->
     <template #footer>
       <div class="w-100 d-flex justify-content-between">
         <CButton @click="closeModal('close')" color="danger">Cancel</CButton>
-        <CButton @click="uploadAttempt()" color="success">Submit</CButton>
+        <CButton @click="onSubmit()" color="success">Submit</CButton>
       </div>
     </template>
 
@@ -111,35 +107,50 @@
 
 <script>
 import axios from "axios";
+import Datepicker from "vuejs-datepicker";
+
 export default {
-  name: "ChallengeDetails",
-  props: {
-    challenge: {
-      type: Object,
-      required: true,
-    },
-    modalTitle: {
-      type: String,
-      required: true,
-    },
+  name: "AddBudgetPositionModal",
+  props: {},
+  components: {
+    Datepicker,
   },
   data() {
     return {
-      usersOpened: null,
-      tasks: null,
-      description: "",
-      file: "",
       showModal: true,
+      formData: {
+        title: "",
+        category: "",
+        when: "",
+        amount: 0,
+        comment: "",
+      },
+      file: null,
+      selectCategoryOptions: [],
     };
   },
-  filters: {
-    capitalize: function (value) {
-      if (!value) return "";
-      value = value.toString();
-      return value.toUpperCase();
-    },
+  mounted() {
+    this.getAllCategories();
   },
   methods: {
+    /**
+     * Get all the available budget categories from the server
+     */
+    getAllCategories() {
+      const token = localStorage.getItem("user-token");
+      const bearer = "Bearer " + token;
+      axios({
+        method: "get",
+        url: "https://api.motivo.localhost/budget/categories/",
+        headers: {
+          Authorization: bearer,
+        },
+      })
+        .then((resp) => {
+          this.selectCategoryOptions = resp.data;
+        })
+        .catch((error) => console.log(error));
+    },
     closeModal(mode) {
       if (mode == "close") {
         this.$emit("closed");
@@ -153,19 +164,17 @@ export default {
       console.log(this.file);
     },
 
-    uploadAttempt() {
+    onSubmit() {
       const token = localStorage.getItem("user-token");
       const bearer = "Bearer " + token;
 
       let formData = new FormData();
       formData.append("file", this.file);
-      formData.append("user", localStorage.getItem("user-id"));
-      formData.append("challenge", this.challenge.id);
-      formData.append("description", this.description);
+      formData.append("budget_data", JSON.stringify(this.formData));
 
       axios({
         method: "post",
-        url: "https://api.motivo.localhost/attempt/",
+        url: "https://api.motivo.localhost/budget/management/",
         data: formData,
         headers: {
           Authorization: bearer,

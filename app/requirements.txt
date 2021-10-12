@@ -1,6 +1,7 @@
 django
 djangorestframework
-djangorestframework_simplejwt
+PyJWT==2.1.0
+djangorestframework-simplejwt==4.8.0
 pillow
 gunicorn==19.9.0
 django-environ
@@ -9,3 +10,4 @@ django-cors-headers
 django-model-utils
 django-celery
 django-celery-email
+celery==5.0.5

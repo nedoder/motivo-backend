@@ -1,6 +1,18 @@
 <template>
   <div>
     <div class="wrapper">
+      <div v-if="selectedChallengeCategoryFilter" class="row">
+        <div class="col-1"></div>
+        <div class="col-10 d-flex flex-row-reverse">
+          <CButton @click="clearFilter()" color="primary" v-bind="{ variant: 'outline' }" class="m-2 w-100">
+            Clear filter
+          </CButton>
+
+          <!-- <CLink @click="clearFilter()"> Clear filter </CLink> -->
+        </div>
+        <div class="col-1"></div>
+      </div>
+
       <CRow alignHorizontal="center">
         <CCol class="col-2 p-3" v-for="(category, index) in categories">
           <div
@@ -132,9 +144,9 @@
                   ]"
                 >
                   <span v-if="challenge.challenge_available_to_attempt">
-                    A
+                    Active
                   </span>
-                  <span v-else> I </span>
+                  <span v-else> Inactive </span>
                 </CButton>
               </div>
             </div>
@@ -228,6 +240,10 @@ export default {
     },
   },
   methods: {
+    clearFilter() {
+      this.selectedChallengeCategoryFilter = null;
+      this.initializeComponent();
+    },
     /**
      * Retrieve challenges when user picks one category of challenges
      */
@@ -497,6 +513,5 @@ p:first-child {
   cursor: not-allowed;
   transform: none;
   box-shadow: -3px 5px 4px rgb(189 189 189 / 87%);
-
 }
 </style>

@@ -26,6 +26,7 @@ urlpatterns = [
     path('', include('apps.motivo.urls')),
     path('', include('apps.awards.urls')),
     path('', include('apps.challenges.urls')),
+    path('budget/', include('apps.budget.urls')),
     path('uploads/images/<str:imagename>', DisplayImageView.as_view(), name="display-image"),
     path('uploads/attempts/<str:imagename>', DisplayImageView.as_view(), name="attempt-image"),
     path('uploads/challenge_files/<str:filename>', DownloadFileView.as_view(), name="download-file")

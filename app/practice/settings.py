@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'apps.motivo',
     'apps.challenges',
-    'apps.awards'
+    'apps.awards',
+    'apps.budget'
 ]
 
 MIDDLEWARE = [
@@ -170,13 +171,13 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = False
 #
-# CORS_ORIGIN_WHITELIST = [
-#     'http://127.0.0.1:8080',
-#     'http://localhost:8080',
-#     'https://motivo.localhost'
-# ]
+CORS_ORIGIN_WHITELIST = [
+    'http://127.0.0.1:8080',
+    'http://localhost:8080',
+    'https://motivo.localhost'
+]
 
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 

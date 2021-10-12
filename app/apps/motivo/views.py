@@ -21,6 +21,18 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = Profile.objects.all().order_by('initial_budget_gross')
     serializer_class = UserSerializer
+    
+    def put(self, request):
+        """Update password of the user"""
+        password = request.data['password']
+        repeat_password = request.data['repeat_password']
+        
+        if password != repeat_password:
+            return Response({"message": "Repeated password is not the same"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        request.user.set_password(password)
+        request.user.save()
+        return Response({"message":"Password changed successfully!"})
 
 class UserDataViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
@@ -60,8 +72,9 @@ class ChallengeViewSet(viewsets.ModelViewSet):
         category_filter = self.request.query_params.get('category_id')
         
         # Retrieve challenges with amount of attempts taken by the user
+        counted_statuses = ["accepted", "waiting"]
         challenges = Challenge.objects.annotate(
-            attempted_by_user=Count('attempts', filter=Q(attempts__user=request.user))) \
+            attempted_by_user=Count('attempts', filter=Q(attempts__user=request.user) & Q(attempts__status__in=counted_statuses))) \
             .order_by('coins_to_win') \
             .prefetch_related('category')
         
@@ -75,7 +88,7 @@ class ChallengeViewSet(viewsets.ModelViewSet):
         
         for challenge in challenges:
             # Check if user attempted a challenge and is waiting for confirmation
-            attempt_to_be_confirmed = Attempt.objects.filter(user=request.user, challenge=challenge, confirmed_by_admin=False).exists()
+            attempt_to_be_confirmed = Attempt.objects.filter(user=request.user, challenge=challenge, status="waiting").exists()
             challenge_available_to_attempt = False if attempt_to_be_confirmed else True
                 
             challenge_obj = {
@@ -107,33 +120,29 @@ class ChallengeViewSet(viewsets.ModelViewSet):
 
 class CompletedViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
-    queryset = Attempt.objects.all().filter(confirmed_by_admin=True).order_by('date')
+    queryset = Attempt.objects.all().filter(status="accepted").order_by('date')
     serializer_class = CompletedSerializer
 
 
 class AttemptViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
-    queryset = Attempt.objects.all().filter(confirmed_by_admin=False)
+    queryset = Attempt.objects.all().filter(status="declined")
     serializer_class = AttemptSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = PostAttemptSerializer(data=request.data)
         if serializer.is_valid():
             user = request.data.get("user")
-            print('------')
-            print(user)
-            print('------')
+
             challenges = request.data.get("challenge")
             challenge = Challenge.objects.get(id=challenges)
-            print('------')
-            print(challenge.number_of_attempts)
-            print('------')
-            counter = Attempt.objects.filter(challenge=challenge, user=user).count()
+
+            attempts_statuses_to_count = ["waiting", "accepted"]
+            counter = Attempt.objects.filter(challenge=challenge, user=user, status__in=attempts_statuses_to_count).count()
             #counter = len(count)
-            print('------')
-            print('------')
+
             attempts_left = int(challenge.number_of_attempts) - counter
-            if counter >= int(challenge.number_of_attempts):
+            if not attempts_left:
                 return Response({"message": "You reached the limit of attempts"}, status=status.HTTP_400_BAD_REQUEST)
             mail = Mailer()
             mail.send_messages(subject=f'Motivo - {request.user.first_name} {request.user.last_name} attempted the challenge {challenge.title}',
