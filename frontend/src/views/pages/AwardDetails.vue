@@ -74,6 +74,7 @@ export default {
   },
   data() {
     return {
+      api_url: process.env.VUE_APP_API_URL,
       showModal: true,
       note: "",
     };
@@ -91,7 +92,7 @@ export default {
 
       axios({
         method: "post",
-        url: "https://api.motivo.localhost/collectedawards/",
+        url: `${this.api_url}/collectedawards/`,
         data: data,
         headers: {
           Authorization: bearer,

@@ -52,6 +52,7 @@
     },
     data() {
       return {
+        api_url: process.env.VUE_APP_API_URL,
         usersOpened: null,
         tasks: null
       }
@@ -83,7 +84,7 @@
       const bearer = 'Bearer ' + token
       const tasks = axios({
         method: 'get',
-        url: `https://api.motivo.localhost/challenges/${this.$route.params.id}`,
+        url: `${this.api_url}/challenges/${this.$route.params.id}`,
         headers: {
           'Authorization': bearer,
         }

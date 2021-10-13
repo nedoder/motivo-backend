@@ -81,7 +81,7 @@
 
       <!-- Button to download the challenge attachment -->
       <CRow v-if="challenge.file" class="mt-5">
-        <CLink :href="'https://api.motivo.localhost/' + challenge.file" target="_blank">
+        <CLink :href="api_url + challenge.file" target="_blank">
           Challenge instructions file
         </CLink>
       </CRow>
@@ -125,6 +125,7 @@ export default {
   },
   data() {
     return {
+      api_url: process.env.VUE_APP_API_URL,
       usersOpened: null,
       tasks: null,
       description: "",
@@ -165,7 +166,7 @@ export default {
 
       axios({
         method: "post",
-        url: "https://api.motivo.localhost/attempt/",
+        url: `${this.api_url}/attempt/`,
         data: formData,
         headers: {
           Authorization: bearer,

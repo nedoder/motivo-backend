@@ -96,6 +96,7 @@ export default {
   },
   data() {
     return {
+      api_url: process.env.VUE_APP_API_URL,
       awardsOpened: null,
       awards: [],
       message: "",
@@ -138,7 +139,7 @@ export default {
       console.log(data);
       axios({
         method: "post",
-        url: "https://api.motivo.localhost/collectedawards/",
+        url: `${this.api_url}/collectedawards/`,
         data: data,
         headers: {
           Authorization: bearer,
@@ -163,7 +164,7 @@ export default {
     const awards = axios({
       method: "get",
 
-      url: `https://api.motivo.localhost/awards/${this.$route.params.id}`,
+      url: `${this.api_url}/awards/${this.$route.params.id}`,
 
       headers: {
         Authorization: bearer,

@@ -62,6 +62,7 @@ export default {
   name: "CustomLogIn",
   data() {
     return {
+      api_url: process.env.VUE_APP_API_URL,
       loginInfo: {
         email: "",
         password: "",
@@ -93,7 +94,7 @@ export default {
       };
       axios({
         method: "post",
-        url: "https://api.motivo.localhost/api/token/",
+        url: `${this.api_url}/api/token/`,
         data: data,
       })
         .then((resp) => {
@@ -106,7 +107,7 @@ export default {
 
           axios({
             method: "get",
-            url: "https://api.motivo.localhost/userdata/",
+            url: `${this.api_url}/userdata/`,
             headers: {
               Authorization: bearer,
             },

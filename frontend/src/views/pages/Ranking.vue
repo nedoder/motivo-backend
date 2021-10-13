@@ -88,6 +88,7 @@ export default {
   name: "Ranking",
   data() {
     return {
+      api_url: process.env.VUE_APP_API_URL,
       items: [],
       position: null,
       fields: [
@@ -201,7 +202,7 @@ export default {
     const bearer = "Bearer " + token;
     axios({
       method: "get",
-      url: "https://api.motivo.localhost/ranking/",
+      url: `${this.api_url}/ranking/`,
       headers: {
         Authorization: bearer,
       },

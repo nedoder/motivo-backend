@@ -121,6 +121,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      api_url: process.env.VUE_APP_API_URL,
       collapsed: false,
       coins: [],
     };
@@ -142,7 +143,7 @@ export default {
       const id = localStorage.getItem("user-id");
       axios({
         method: "get",
-        url: "https://api.motivo.localhost/profile/",
+        url: `${this.api_url}/profile/`,
         headers: {
           Authorization: bearer,
         },
@@ -169,7 +170,7 @@ export default {
     const id = localStorage.getItem("user-id");
     axios({
       method: "get",
-      url: "https://api.motivo.localhost/profile/",
+      url: `${this.api_url}/profile/`,
       headers: {
         Authorization: bearer,
       },

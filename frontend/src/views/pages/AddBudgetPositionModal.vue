@@ -117,6 +117,7 @@ export default {
   },
   data() {
     return {
+      api_url: process.env.VUE_APP_API_URL,
       showModal: true,
       formData: {
         title: "",
@@ -141,7 +142,7 @@ export default {
       const bearer = "Bearer " + token;
       axios({
         method: "get",
-        url: "https://api.motivo.localhost/budget/categories/",
+        url: `${this.api_url}/budget/categories/`,
         headers: {
           Authorization: bearer,
         },
@@ -174,7 +175,7 @@ export default {
 
       axios({
         method: "post",
-        url: "https://api.motivo.localhost/budget/management/",
+        url: `${this.api_url}/budget/management/`,
         data: formData,
         headers: {
           Authorization: bearer,

@@ -36,6 +36,7 @@ export default {
   components: {TheHeader,},
   data(){
     return {
+      api_url: process.env.VUE_APP_API_URL,
        editInfo: {
           name: localStorage.getItem('user-name') || '',
           surname: localStorage.getItem('user-surname') || '',
@@ -60,7 +61,7 @@ export default {
         console.log(bearer)
         axios({
             method:'put',
-            url: `https://api.motivo.localhost/user/${this.editInfo.id}/`,
+            url: `${this.api_url}/user/${this.editInfo.id}/`,
             data: data,
             headers: { 'Authorization': bearer },
         })
