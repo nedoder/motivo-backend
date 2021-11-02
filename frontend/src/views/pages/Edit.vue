@@ -102,6 +102,8 @@ export default {
   components: { TheHeader },
   data() {
     return {
+      api_url: process.env.VUE_APP_API_URL,
+
       editInfo: {
         name: "",
         surname: "",
@@ -145,7 +147,7 @@ export default {
 
       axios({
         method: "get",
-        url: `https://api.motivo.localhost/userdata/`,
+        url: `${this.api_url}/userdata/`,
         headers: { Authorization: bearer },
       })
         .then((res) => {
@@ -167,7 +169,7 @@ export default {
 
       axios({
         method: "put",
-        url: `https://api.motivo.localhost/users/`,
+        url: `${this.api_url}/users/`,
         data: data,
         headers: { Authorization: bearer },
       })

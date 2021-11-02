@@ -69,6 +69,7 @@ export default {
   },
   data() {
     return {
+      api_url: process.env.VUE_APP_API_URL,
       showModal: false,
       annual_personal_budget_amount: 0,
       budget_left: 0,
@@ -149,7 +150,7 @@ export default {
 
       const budget = axios({
         method: "get",
-        url: "https://api.motivo.localhost/budget/management/",
+        url: `${this.api_url}/budget/management/`,
         headers: {
           Authorization: bearer,
         },

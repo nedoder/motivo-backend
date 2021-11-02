@@ -194,7 +194,7 @@ export default {
   },
   data() {
     return {
-      api_url: process.env.API_URL,
+      api_url: process.env.VUE_APP_API_URL,
 
       challenges: [],
       attempts: [],
@@ -261,7 +261,7 @@ export default {
 
       const challenges = axios({
         method: "get",
-        url: "https://api.motivo.localhost/challenges/",
+        url: `${this.api_url}/challenges/`,
         headers: {
           Authorization: bearer,
         },
@@ -270,7 +270,7 @@ export default {
 
       const attempts = axios({
         method: "get",
-        url: "https://api.motivo.localhost/attempt/",
+        url: `${this.api_url}/attempt/`,
         headers: {
           Authorization: bearer,
         },
@@ -278,7 +278,7 @@ export default {
 
       const complets = axios({
         method: "get",
-        url: "https://api.motivo.localhost/completed/",
+        url: `${this.api_url}/completed/`,
         headers: {
           Authorization: bearer,
         },
@@ -286,7 +286,7 @@ export default {
 
       const categories = axios({
         method: "get",
-        url: "https://api.motivo.localhost/categories/",
+        url: `${this.api_url}/categories/`,
         headers: {
           Authorization: bearer,
         },

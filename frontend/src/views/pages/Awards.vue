@@ -119,6 +119,7 @@ export default {
 
   data() {
     return {
+      api_url: process.env.VUE_APP_API_URL,
       awards: [],
       showModal: false,
       modalTitle: "",
@@ -139,7 +140,7 @@ export default {
       const id = localStorage.getItem("user-id");
       axios({
         method: "get",
-        url: "https://api.motivo.localhost/profile/",
+        url: `${this.api_url}/profile/`,
         headers: {
           Authorization: bearer,
         },
@@ -163,7 +164,7 @@ export default {
       const bearer = "Bearer " + token;
       axios({
         method: "get",
-        url: "https://api.motivo.localhost/awards/",
+        url: `${this.api_url}/awards/`,
         headers: {
           Authorization: bearer,
         },

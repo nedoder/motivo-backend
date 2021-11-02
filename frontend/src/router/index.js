@@ -502,9 +502,10 @@ axios.interceptors.response.use(response => {
     return response
 }, error => {
     if (error.response.status === 401) {
+        var api_url = process.env.VUE_APP_API_URL;
         axios({
                 method: 'post',
-                url: 'https://api.motivo.localhost/api/token/refresh/',
+                url: `${api_url}/api/token/refresh/`,
                 data: { refresh: localStorage.getItem('user-refresh') },
             })
             .then(

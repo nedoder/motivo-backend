@@ -6,11 +6,12 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework import status
 from django.http import HttpResponse
-from .tasks import Mailer
 from django.db.models import Q, Count
 import json
 from django.core import serializers
 from django.http import FileResponse, JsonResponse
+import sys
+from practice.tasks import challenge_mail, reward_mail
 
 from apps.awards.models import Awards, CollectedAwards
 from apps.awards.serializers import AwardsSerializer, CollectedAwardsSerializer, UsersCollectedAwardsSerializer
@@ -144,10 +145,8 @@ class AttemptViewSet(viewsets.ModelViewSet):
             attempts_left = int(challenge.number_of_attempts) - counter
             if not attempts_left:
                 return Response({"message": "You reached the limit of attempts"}, status=status.HTTP_400_BAD_REQUEST)
-            mail = Mailer()
-            mail.send_messages(subject=f'Motivo - {request.user.first_name} {request.user.last_name} attempted the challenge {challenge.title}',
-                               context=f"Hey!\n\n{request.user.first_name} {request.user.last_name} just attempted the challenge {challenge.title}.\nPlease review it in admin panel :)\n\nCheers, Motvo!",
-                               to_emails=['finalprojectreactnode@gmail.com'])
+            challenge_mail.delay(request.user.first_name, request.user.last_name, challenge.title)
+                 
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -227,10 +226,7 @@ class CollectedAwardsViewSet(viewsets.ModelViewSet):
                 serializer.save()
                 
                 # Send email notification to inform about the collected award
-                mail = Mailer()
-                mail.send_messages(subject='Motivo - award was collected',
-                               context=f"Hey!\n\n{request.user.first_name} {request.user.last_name} wants to collect the award {award.title}.\n\nIncluded note:\n{serializer.data.get('user_note')}.\n\nCheers, Motivo!",
-                               to_emails=['finalprojectreactnode@gmail.com'])
+                reward_mail.delay(request.user.first_name, request.user.last_name, award.title, serializer.data.get('user_note'))
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             print(serializer.errors)

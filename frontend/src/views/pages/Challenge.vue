@@ -104,6 +104,7 @@ export default {
   },
   data() {
     return {
+      api_url: process.env.VUE_APP_API_URL,
       usersOpened: null,
       tasks: null,
       description: "",
@@ -143,7 +144,7 @@ export default {
       formData.append("description", this.description);
       axios({
         method: "post",
-        url: "https://api.motivo.localhost/attempt/",
+        url: `${this.api_url}/attempt/`,
         data: formData,
         headers: {
           Authorization: bearer,
@@ -166,7 +167,7 @@ export default {
     const bearer = "Bearer " + token;
     const tasks = axios({
       method: "get",
-      url: `https://api.motivo.localhost/challenges/${this.$route.params.id}`,
+      url: `${this.api_url}/challenges/${this.$route.params.id}`,
       headers: {
         Authorization: bearer,
       },
