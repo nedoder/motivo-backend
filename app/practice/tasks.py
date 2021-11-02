@@ -1,7 +1,6 @@
 from .celery import app
 from apps.motivo.models import Profile
 from django.core.mail import send_mail
-from time import sleep
 
 
 # todo remove hello world task
@@ -11,7 +10,17 @@ def hello_world():
 
 @app.task
 def challenge_mail(fname,lname,chtitle):
-    sleep(10)
+    '''Sends email to admin when users attempt to do the challenge
+       
+       Parameters
+       ----------
+       fname : str
+        User first name
+       lname : str
+        User last name
+       chtitle : str
+        Name of the challenge
+    '''
     send_mail(f'Motivo - {fname} {lname} attempted the challenge {chtitle}',
     f"Hey!\n\n{fname} {lname} just attempted the challenge {chtitle}.\nPlease review it in admin panel :)\n\nCheers, Motivo!",
     'motivoemailtest@gmail.com',
@@ -21,7 +30,19 @@ def challenge_mail(fname,lname,chtitle):
 
 @app.task
 def reward_mail(fname,lname,awtitle,usernote):
-    sleep(10)
+    '''Sends email to admin when users attempt to collect award
+
+       Parameters
+       ----------
+       fname : str
+        User first name
+       lname : str
+        User last name
+       awtitle : str
+        Name of the award
+       usernote : str
+        Additional award description
+    '''
     send_mail('Motivo - award was collected',
     f"Hey!\n\n{fname} {lname} wants to collect the award {awtitle}.\n\nIncluded note:\n{usernote}.\n\nCheers, Motivo!",
     'motivoemailtest@gmail.com',

@@ -145,7 +145,7 @@ class AttemptViewSet(viewsets.ModelViewSet):
             attempts_left = int(challenge.number_of_attempts) - counter
             if not attempts_left:
                 return Response({"message": "You reached the limit of attempts"}, status=status.HTTP_400_BAD_REQUEST)
-            challenge_mail(request.user.first_name, request.user.last_name, challenge.title)
+            challenge_mail.delay(request.user.first_name, request.user.last_name, challenge.title)
                  
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -226,7 +226,7 @@ class CollectedAwardsViewSet(viewsets.ModelViewSet):
                 serializer.save()
                 
                 # Send email notification to inform about the collected award
-                reward_mail(request.user.first_name, request.user.last_name, award.title, serializer.data.get('user_note'))
+                reward_mail.delay(request.user.first_name, request.user.last_name, award.title, serializer.data.get('user_note'))
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             print(serializer.errors)
