@@ -185,9 +185,9 @@ EMAIL_HOST = 'smtp.gmail.com'
 
 EMAIL_PORT = '587'
 
-EMAIL_HOST_USER = 'finalprojectreactnode@gmail.com'
+EMAIL_HOST_USER = 'motivoemailtest@gmail.com'
 
-EMAIL_HOST_PASSWORD = 'finalProject123'
+EMAIL_HOST_PASSWORD = 'mot1vot#st'
 
 EMAIL_USE_TLS = True # TLS settings
 
